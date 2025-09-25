@@ -45,7 +45,7 @@ export const generateSitemap = async (req, res) => {
             });
         });
 
-        const stream = new SitemapStream({ hostname: 'https://sijgeriaucssangha.vercel.app' });
+        const stream = new SitemapStream({ hostname: 'https://sucss.vercel.app' });
 
         res.header('Content-Type', 'application/xml');
 
