@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // baseURL: 'https://sijgeriaucssangha.vercel.app/api/v1',
-  baseURL: 'http://localhost:5000/api/v1',
+  baseURL: 'https://sijgeriaucssangha.vercel.app/api/v1',
+  // baseURL: 'http://localhost:5000/api/v1',
   // withCredentials is no longer needed for localStorage auth
 });
 
