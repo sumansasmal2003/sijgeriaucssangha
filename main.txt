@@ -1,0 +1,347 @@
+'import React, { useState, useEffect } from 'react';
+import api from '../api/api';
+import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { Loader2, Users } from 'lucide-react';
+
+const OfficialCard = ({ member }) => {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.5 }}
+            className="bg-surface border border-border rounded-lg text-center p-8 flex flex-col items-center"
+        >
+            <img
+                src={member.profileImage.url}
+                alt={`${member.firstName} ${member.lastName}`}
+                className="w-32 h-32 rounded-full object-cover border-4 border-primary mb-4"
+            />
+            <h3 className="text-xl font-bold text-text-primary">{member.firstName} {member.lastName}</h3>
+            <p className="text-md text-text-primary font-semibold">{member.designation}</p>
+            <p className="text-md text-text-secondary font-semibold">{member.phone}</p>
+            <p className="text-md text-shadow-text-secondary font-semibold">{member.email}</p>
+        </motion.div>
+    );
+};
+
+const OurTeamPage = () => {
+    const [officials, setOfficials] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchOfficials = async () => {
+            try {
+                const { data } = await api.get('/member/public-directory');
+                setOfficials(data.officials);
+            } catch (error) {
+                toast.error('Could not fetch team directory.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchOfficials();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="text-center mb-12">
+                <Users className="mx-auto h-12 w-12 text-primary" />
+                <h1 className="mt-4 text-4xl font-bold tracking-tight text-text-primary">
+                    Our Team
+                </h1>
+                <p className="mt-2 text-lg text-text-secondary max-w-2xl mx-auto">
+                    Meet the dedicated leadership team guiding our club's mission and activities.
+                </p>
+            </div>
+
+            {officials.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                    {officials.map(member => (
+                        <OfficialCard key={member._id} member={member} />
+                    ))}
+                </div>
+            ) : (
+                 <p className="text-center text-text-secondary">The leadership directory is currently unavailable.</p>
+            )}
+        </div>
+    );
+};
+
+export default OurTeamPage;
+', 'import React from 'react';
+import { motion } from 'framer-motion';
+import { ShieldCheck } from 'lucide-react';
+
+const PrivacyPolicyPage = () => {
+    return (
+        <div className="bg-background text-text-primary">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-4xl mx-auto"
+                >
+                    <div className="text-center mb-12">
+                        <ShieldCheck className="mx-auto h-12 w-12 text-primary" />
+                        <h1 className="mt-4 text-4xl sm:text-5xl font-bold tracking-tight">Privacy Policy</h1>
+                        <p className="mt-4 text-lg text-text-secondary">Last updated: September 24, 2025</p>
+                    </div>
+
+                    <div className="prose prose-invert prose-lg max-w-none space-y-8 text-text-secondary">
+                        <p>
+                            Sijgeria Umesh Chandra Smriti Sangha ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
+                        </p>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">1. Information We Collect</h2>
+                            <p>We may collect personal information from you in a variety of ways, including:</p>
+                            <ul>
+                                <li>
+                                    <strong>Personal Data:</strong> When you register as a User (Volunteer) or are invited as a Member, we collect personally identifiable information, such as your name, email address, and phone number, which you voluntarily give to us.
+                                </li>
+                                <li>
+                                    <strong>Donation Information:</strong> When you make a donation, we collect your name and email to record the transaction. We do not collect or store any payment card information; this is handled securely by our payment processors.
+                                </li>
+                                <li>
+                                    <strong>Event Participation Data:</strong> When you register for an event, we collect your contact details and the names of the performers you register. This information is used solely for organizing and managing the event.
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">2. How We Use Your Information</h2>
+                            <p>Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you to:</p>
+                            <ul>
+                                <li>Create and manage your account.</li>
+                                <li>Email you regarding your account, event registrations, or donations.</li>
+                                <li>Process donations and send you a confirmation.</li>
+                                <li>Organize and manage club events.</li>
+                                <li>Notify you of updates, announcements, and new events.</li>
+                                <li>Monitor and analyze usage to improve our website and services.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">3. Disclosure of Your Information</h2>
+                            <p>We do not share, sell, rent, or trade your personal information with any third parties for their commercial purposes. We may share information we have collected about you in certain situations:</p>
+                            <ul>
+                                <li>
+                                    <strong>Public Directories:</strong> If you are a club official (e.g., President, Secretary), your name, designation, and profile picture may be displayed on our "Our Team" page. If you are a registered volunteer, your name, contact details, and profile picture may be displayed on our "Volunteers" page. You can manage this from your profile settings.
+                                </li>
+                                <li>
+                                    <strong>By Law or to Protect Rights:</strong> If release of information is necessary to respond to legal process or to protect the rights, property, and safety of others, we may share your information as permitted or required by any applicable law.
+                                </li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">4. Security of Your Information</h2>
+                            <p>
+                                We use administrative, technical, and physical security measures to help protect your personal information. While we have taken reasonable steps to secure the personal information you provide to us, please be aware that despite our efforts, no security measures are perfect or impenetrable, and no method of data transmission can be guaranteed against any interception or other type of misuse.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">5. Contact Us</h2>
+                            <p>
+                                If you have questions or comments about this Privacy Policy, please contact us at:
+                                <br />
+                                Sijgeria Umesh Chandra Smriti Sangha
+                                <br />
+                                Email: <a href="mailto:sijgeria@gmail.com" className="text-primary hover:underline">sijgeria@gmail.com</a>
+                            </p>
+                        </section>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+export default PrivacyPolicyPage;
+', 'import React from 'react';
+import { motion } from 'framer-motion';
+import { FileText } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const TermsAndConditionsPage = () => {
+    return (
+        <div className="bg-background text-text-primary">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="max-w-4xl mx-auto"
+                >
+                    <div className="text-center mb-12">
+                        <FileText className="mx-auto h-12 w-12 text-primary" />
+                        <h1 className="mt-4 text-4xl sm:text-5xl font-bold tracking-tight">Terms and Conditions</h1>
+                        <p className="mt-4 text-lg text-text-secondary">Last updated: September 24, 2025</p>
+                    </div>
+
+                    <div className="prose prose-invert prose-lg max-w-none space-y-8 text-text-secondary">
+                        <p>
+                            Welcome to the Sijgeria Umesh Chandra Smriti Sangha website. By accessing or using our website, you agree to be bound by these Terms and Conditions and our Privacy Policy.
+                        </p>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">1. User Accounts and Conduct</h2>
+                            <p>
+                                To access certain features, you must register for a User (Volunteer) account. You agree to provide accurate, current, and complete information during the registration process. You are responsible for safeguarding your password and for all activities that occur under your account. You agree not to engage in any activity that is harmful, abusive, or disruptive to the community or the functioning of this website.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">2. Member Responsibilities</h2>
+                            <p>
+                                Members of the club have additional privileges, including the ability to manage events, users, and other club-related content. With these privileges comes the responsibility to act in the best interest of the club and its community. Misuse of these privileges, including but not limited to unfairly blocking users, posting inappropriate content, or misrepresenting the club, may result in the revocation of your member status.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">3. Event Participation</h2>
+                            <p>
+                                When you register for an event, you agree to provide accurate information for all performers. You may cancel your registration up until the day before the event. Cancellations on the day of the event or after are not permitted. The club reserves the right to cancel or reschedule events at its discretion.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">4. Donations</h2>
+                            <p>
+                                All donations made through our website are processed via a UPI QR code system. We record your name, email, and the intended donation amount for our records. The transaction itself is handled by your UPI application and the banking network. We are not responsible for any transaction failures. All donations are final and non-refundable.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">5. Intellectual Property</h2>
+                            <p>
+                                All content on this website, including text, graphics, logos, and images, is the property of Sijgeria Umesh Chandra Smriti Sangha or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works from this content without our express written permission.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">6. Limitation of Liability</h2>
+                            <p>
+                                This website and its content are provided on an "as is" basis. Sijgeria Umesh Chandra Smriti Sangha makes no warranties, expressed or implied, and hereby disclaims all other warranties. In no event shall the club be liable for any damages arising out of the use or inability to use the materials on this website.
+                            </p>
+                        </section>
+
+                         <section>
+                            <h2 className="text-2xl font-bold text-text-primary">7. Changes to These Terms</h2>
+                            <p>
+                                We reserve the right to modify these Terms and Conditions at any time. We will notify you of any changes by posting the new terms on this page and updating the "Last updated" date. Your continued use of the website after any such changes constitutes your acceptance of the new Terms and Conditions.
+                            </p>
+                        </section>
+
+                        <section>
+                            <h2 className="text-2xl font-bold text-text-primary">8. Contact Us</h2>
+                            <p>
+                                If you have any questions about these Terms and Conditions, please <Link to="/contact" className="text-primary hover:underline">contact us</Link>.
+                            </p>
+                        </section>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+export default TermsAndConditionsPage;
+', 'import React, { useState, useEffect } from 'react';
+import api from '../api/api';
+import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { Loader2, Users, Mail, Phone } from 'lucide-react';
+
+const VolunteerCard = ({ user }) => {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="bg-surface border border-border rounded-lg text-center p-6 flex flex-col items-center"
+        >
+            <img
+                src={user.profileImage.url}
+                alt={user.fullName}
+                className="w-28 h-28 rounded-full object-cover border-4 border-primary/50 mb-4"
+            />
+            <h3 className="text-xl font-bold text-text-primary">{user.fullName}</h3>
+            <div className="mt-4 border-t border-border/50 w-full pt-4 space-y-2">
+                <a href={`mailto:${user.email}`} className="flex items-center justify-center gap-2 text-sm text-text-secondary hover:text-primary">
+                    <Mail size={14} /> {user.email}
+                </a>
+                <p className="flex items-center justify-center gap-2 text-sm text-text-secondary">
+                    <Phone size={14} /> {user.contactNumber}
+                </p>
+            </div>
+        </motion.div>
+    );
+};
+
+const VolunteersPage = () => {
+    const [volunteers, setVolunteers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchVolunteers = async () => {
+            try {
+                const { data } = await api.get('/user/volunteers');
+                if (data.success) {
+                    setVolunteers(data.users);
+                }
+            } catch (error) {
+                toast.error('Could not fetch the list of volunteers.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchVolunteers();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="text-center mb-12">
+                <Users className="mx-auto h-12 w-12 text-primary" />
+                <h1 className="mt-4 text-4xl font-bold tracking-tight text-text-primary">
+                    Our Dedicated Volunteers
+                </h1>
+                <p className="mt-2 text-lg text-text-secondary max-w-2xl mx-auto">
+                    The heart of our community. We are incredibly grateful for the time and effort our volunteers contribute.
+                </p>
+            </div>
+
+            {volunteers.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    {volunteers.map(user => (
+                        <VolunteerCard key={user._id} user={user} />
+                    ))}
+                </div>
+            ) : (
+                 <p className="text-center text-text-secondary">No volunteers to display at the moment.</p>
+            )}
+        </div>
+    );
+};
+
+export default VolunteersPage;
+' make those components in the same theme separately

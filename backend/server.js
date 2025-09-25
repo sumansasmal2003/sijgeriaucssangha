@@ -74,7 +74,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const allowed = ['http://localhost:5173', 'https://sucss.netlify.app'];
+const allowed = ['http://localhost:5173', 'https://sucss.netlify.app', 'https://sucss.vercel.app'];
 
 // Middleware
 app.use(cors({
