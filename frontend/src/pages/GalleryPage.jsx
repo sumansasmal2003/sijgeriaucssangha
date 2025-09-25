@@ -7,19 +7,8 @@ import Lightbox from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import api from '../api/api';
+import { Helmet } from 'react-helmet-async';
 
-// Enhanced Animation Variants
-const fadeIn = {
-  initial: { opacity: 0, y: 40 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
 
 const scaleIn = {
   initial: { opacity: 0, scale: 0.9 },
@@ -97,6 +86,10 @@ const GalleryPage = () => {
 
     return (
         <>
+        <Helmet>
+                <title>Gallery - Sijgeria UCS Sangha</title>
+                <meta name="description" content="A visual journey through our events, initiatives, and community gatherings. Each picture tells a story of unity, celebration, and progress." />
+            </Helmet>
             <div className="min-h-screen bg-background overflow-hidden">
                 {/* Enhanced Hero Section */}
                 <section className="relative py-24 lg:py-32 bg-gradient-to-br from-surface/30 to-background overflow-hidden">
@@ -333,13 +326,13 @@ const GalleryPage = () => {
                         backdropFilter: "blur(20px)"
                     },
                     captionsTitle: {
-                        color: "#F8F8F8",
+                        color: "#000",
                         fontSize: "1.5rem",
                         fontWeight: "bold",
                         fontFamily: "inherit"
                     },
                     captionsDescription: {
-                        color: "#A1A1AA",
+                        color: "#000",
                         fontSize: "1rem",
                         fontFamily: "inherit"
                     }

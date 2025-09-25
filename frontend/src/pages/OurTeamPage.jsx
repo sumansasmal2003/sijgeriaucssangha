@@ -3,19 +3,7 @@ import api from '../api/api';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Users, Mail, Phone, Crown, Award, Star, Zap, Sparkles } from 'lucide-react';
-
-// Enhanced Animation Variants
-const fadeIn = {
-  initial: { opacity: 0, y: 40 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
+import { Helmet } from 'react-helmet-async';
 
 const scaleIn = {
   initial: { opacity: 0, scale: 0.9 },
@@ -127,6 +115,10 @@ const OurTeamPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Our Team - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Meet the dedicated individuals who guide our club's vision and drive our community forward. Get to know the passionate leaders behind our success." />
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-20 lg:py-28 bg-gradient-to-br from-surface/30 to-background">
                 {/* Background Elements */}

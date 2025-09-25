@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Megaphone, Calendar, User, Bell, Zap, Clock, Eye, Star } from 'lucide-react';
 import { format, isToday, isThisWeek, isThisMonth } from 'date-fns';
+import { Helmet } from 'react-helmet-async';
 
 // Enhanced Animation Variants
 const fadeIn = {
@@ -77,6 +78,26 @@ const AnnouncementsPage = () => {
         { key: 'month', label: 'This Month', count: announcements.filter(ann => isThisMonth(new Date(ann.createdAt))).length, icon: Calendar }
     ];
 
+    const announcementSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": announcements.map((announcement, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+                "@type": "Article",
+                "headline": announcement.title,
+                "articleBody": announcement.content,
+                "author": {
+                    "@type": "Person",
+                    "name": `${announcement.createdBy.firstName} ${announcement.createdBy.lastName}`
+                },
+                "datePublished": new Date(announcement.createdAt).toISOString(),
+                "url": `https://sijgeriaucssangha.vercel.app/announcement/${announcement._id}`
+            }
+        }))
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
@@ -99,6 +120,13 @@ const AnnouncementsPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Announcements - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Stay updated with the latest news, important updates, and exciting announcements from our community." />
+                <script type="application/ld+json">
+                    {JSON.stringify(announcementSchema)}
+                </script>
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-20 lg:py-28 bg-gradient-to-br from-surface/30 to-background">
                 {/* Background Elements */}

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { format, isToday, isFuture } from 'date-fns';
 import { Loader2, Calendar, MapPin, ArrowRight, Clock, Users, Star, Zap, Trophy, Sparkles } from 'lucide-react';
 import api from '../api/api';
+import { Helmet } from 'react-helmet-async';
 
 // Enhanced Animation Variants
 const fadeIn = {
@@ -12,30 +13,6 @@ const fadeIn = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.7,
-      ease: [0.34, 1.56, 0.64, 1]
-    }
-  }
-};
-
-const slideInLeft = {
-  initial: { opacity: 0, x: -60 },
-  animate: {
-    opacity: 1,
-    x: 0,
     transition: {
       duration: 0.8,
       ease: [0.25, 0.46, 0.45, 0.94]
@@ -55,7 +32,6 @@ const staggerContainer = {
 const EventCard = ({ event, isPast = false }) => {
     const eventDate = new Date(event.date);
     const eventIsToday = isToday(eventDate);
-    const eventIsFuture = isFuture(eventDate);
 
     return (
         <motion.div
@@ -223,6 +199,27 @@ const EventsPage = () => {
                           activeFilter === 'past' ? pastEvents :
                           activeFilter === 'featured' ? featuredEvents : events;
 
+    const eventSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": events.map((event, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+                "@type": "Event",
+                "name": event.title,
+                "startDate": new Date(event.date).toISOString(),
+                "description": event.description,
+                "location": {
+                    "@type": "Place",
+                    "name": event.location
+                },
+                "image": event.bannerImage.url,
+                "url": `https://sijgeriaucssangha.vercel.app/event/${event._id}`
+            }
+        }))
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
@@ -245,6 +242,13 @@ const EventsPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Events - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Stay updated with our upcoming activities and relive our memorable past events." />
+                <script type="application/ld+json">
+                    {JSON.stringify(eventSchema)}
+                </script>
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-24 lg:py-32 bg-gradient-to-br from-surface/30 to-background overflow-hidden">
                 {/* Background Elements */}

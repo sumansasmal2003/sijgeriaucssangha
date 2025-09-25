@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Users, Heart, BookOpen, Sparkles, ArrowRight, Target, Eye, Handshake, Trophy, Star, Zap, Globe } from 'lucide-react';
 import sucss from '../assets/sucss.png';
+import { Helmet } from 'react-helmet-async';
 
 // Enhanced Animation Variants
 const fadeIn = {
@@ -65,6 +66,10 @@ const staggerContainer = {
 const AboutPage = () => {
     return (
         <div className="bg-background text-text-primary overflow-x-hidden">
+          <Helmet>
+                <title>About Us - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Discover the inspiring story behind our community, our unwavering mission, and the core values that guide every initiative we undertake." />
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-24 lg:py-32 text-center bg-gradient-to-br from-surface/50 to-background overflow-hidden">
                 {/* Background Elements */}

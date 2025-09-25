@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api/api';
 import { LogIn, Mail, ShieldCheck, Users, Star, Calendar, Heart, UserCheck, Sparkles, ShieldAlert } from 'lucide-react';
 import Countdown from '../../components/Countdown';
+import { Helmet } from 'react-helmet-async';
 
 const CombinedLoginPage = () => {
     const [activeTab, setActiveTab] = useState('user');
@@ -41,6 +42,10 @@ const CombinedLoginPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+          <Helmet>
+                <title>Login - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Access your member or user account to participate in events, manage your profile, and engage with the community." />
+            </Helmet>
             {/* Left Side - Brand/Info Section (Hidden on Mobile) */}
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-surface/80 to-background/80 relative overflow-hidden">
                  <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>

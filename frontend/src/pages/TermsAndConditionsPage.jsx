@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FileText, Users, Calendar, Gift, Shield, AlertCircle, Mail, BookOpen } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 // Enhanced Animation Variants
 const fadeIn = {
@@ -106,6 +107,10 @@ const TermsAndConditionsPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Terms & Conditions - Sijgeria UCS Sangha</title>
+                <meta name="description" content="These terms govern your use of our website and services. Please read them carefully." />
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-20 lg:py-28 bg-gradient-to-br from-surface/30 to-background">
                 {/* Background Elements */}

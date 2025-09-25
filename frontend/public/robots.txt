@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sijgeriaucssangha.vercel.app/sitemap.xml

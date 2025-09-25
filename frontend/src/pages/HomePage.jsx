@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { HandHeart, Users, Trophy, Lightbulb, ArrowRight, BookOpen, Sparkles, Quote, MapPin, Star, Zap, Heart, Target } from 'lucide-react';
 import sucss from '../assets/sucss.png';
 import Map from '../components/Map';
+import { Helmet } from 'react-helmet-async';
 
 // --- Enhanced Animation Variants ---
 const fadeIn = {
@@ -112,6 +113,10 @@ const HomePage = () => {
 
   return (
     <div className="overflow-x-hidden bg-background min-h-screen text-text-primary">
+      <Helmet>
+            <title>Sijgeria UCS Sangha - Community, Culture, Progress</title>
+            <meta name="description" content="Join the Sijgeria Umesh Chandra Smriti Sangha in our mission to drive social change, celebrate our rich culture, and empower the next generation." />
+        </Helmet>
       {/* Enhanced Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center text-center py-20 overflow-hidden">
         <div className="absolute inset-0 z-0">

@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import api from '../../api/api';
 import { User, Mail, Lock, Phone, KeyRound, CheckCircle, Loader2, Sparkles, Shield, Users, Award, RefreshCw } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const UserRegisterPage = () => {
     const navigate = useNavigate();
@@ -103,6 +104,10 @@ const UserRegisterPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+          <Helmet>
+                <title>Register - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Join our community as a volunteer to make a difference. Create your account and start participating in our initiatives." />
+            </Helmet>
             {/* Left Side - Info Section */}
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-surface to-background relative overflow-hidden">
                  <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>

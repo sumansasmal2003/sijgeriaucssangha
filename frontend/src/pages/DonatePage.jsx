@@ -6,31 +6,7 @@ import QRCode from "react-qr-code";
 import api from '../api/api';
 import { Heart, ArrowRight, Loader2, Info, Users, Award, Sparkles, Zap, Gift, Shield, Star, CheckCircle } from 'lucide-react';
 import sucssLogo from '../assets/sucss.png';
-
-// Enhanced Animation Variants
-const fadeIn = {
-  initial: { opacity: 0, y: 40 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.7,
-      ease: [0.34, 1.56, 0.64, 1]
-    }
-  }
-};
+import { Helmet } from 'react-helmet-async';
 
 const slideInLeft = {
   initial: { opacity: 0, x: -60 },
@@ -110,6 +86,10 @@ const DonatePage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col lg:flex-row overflow-hidden">
+          <Helmet>
+                <title>Donate - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Support our mission and empower change through your generous donations. Your contribution fuels our community initiatives and cultural events." />
+            </Helmet>
             {/* Enhanced Left Side - Info Section */}
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-surface/80 to-background/80 relative overflow-hidden">
                 {/* Animated Background Elements */}

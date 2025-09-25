@@ -18,6 +18,7 @@ import userRoutes from './routes/userRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
+import sitemapRoutes from './routes/sitemapRoutes.js';
 
 
 // Load environment variables
@@ -104,6 +105,7 @@ app.use('/api/v1/gallery', galleryRoutes);
 app.use('/api/v1', donationRoutes);
 app.use('/api/v1', announcementRoutes);
 app.use('/api/v1', contactRoutes);
+app.use('/', sitemapRoutes);
 
 // --- Middleware for Errors ---
 app.use(errorHandler);

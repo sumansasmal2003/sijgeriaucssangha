@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Lock, Eye, UserCheck, FileText, Mail } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 // Enhanced Animation Variants
 const fadeIn = {
@@ -42,6 +43,10 @@ const PrivacyPolicyPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Privacy Policy - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Your privacy is important to us. This policy explains how we collect, use, and protect your personal information." />
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-20 lg:py-28 bg-gradient-to-br from-surface/30 to-background">
                 {/* Background Elements */}

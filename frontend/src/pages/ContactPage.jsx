@@ -3,31 +3,7 @@ import api from '../api/api';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Loader2, Mail, Phone, MapPin, MessageCircle, Zap, User, Target, CheckCircle } from 'lucide-react';
-
-// Enhanced Animation Variants
-const fadeIn = {
-  initial: { opacity: 0, y: 40 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
-  }
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.7,
-      ease: [0.34, 1.56, 0.64, 1]
-    }
-  }
-};
+import { Helmet } from 'react-helmet-async';
 
 const ContactPage = () => {
     const [formData, setFormData] = useState({
@@ -61,6 +37,10 @@ const ContactPage = () => {
 
     return (
         <div className="min-h-screen bg-background overflow-hidden">
+          <Helmet>
+                <title>Contact Us - Sijgeria UCS Sangha</title>
+                <meta name="description" content="Get in touch with us. Whether you have a question, feedback, or a proposal, our team is here to help and connect with you." />
+            </Helmet>
             {/* Enhanced Hero Section */}
             <section className="relative py-20 lg:py-28 bg-gradient-to-br from-surface/30 to-background">
                 {/* Background Elements */}
