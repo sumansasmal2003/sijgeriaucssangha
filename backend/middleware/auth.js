@@ -3,17 +3,21 @@ import User from '../models/userModel.js';
 import Member from '../models/memberModel.js';
 
 export const isAuthenticatedUser = async (req, res, next) => {
-    const { token } = req.cookies;
+    let token;
+
+    // Check for token in the Authorization header
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
 
     if (!token) {
-        const error = new Error('Please Login to access this resource');
+        const error = new Error('Not authorized, no token');
         error.statusCode = 401;
         return next(error);
     }
 
     try {
         const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-
         let userEntity = await User.findById(decodedData.id) || await Member.findById(decodedData.id);
 
         if (!userEntity) {
@@ -24,7 +28,7 @@ export const isAuthenticatedUser = async (req, res, next) => {
 
         if (userEntity.isBlocked && new Date() < new Date(userEntity.blockedUntil)) {
             const error = new Error(`Your account is blocked until ${new Date(userEntity.blockedUntil).toLocaleString()}. Reason: ${userEntity.blockReason}`);
-            error.statusCode = 403; // Forbidden
+            error.statusCode = 403;
             return next(error);
         }
 
@@ -40,7 +44,6 @@ export const isAuthenticatedUser = async (req, res, next) => {
 
 export const authorizeRoles = (...roles) => {
     return (req, res, next) => {
-        // --- FIX: Check for user role OR member designation ---
         const userRole = req.user.role || req.user.designation;
 
         if (!roles.includes(userRole)) {

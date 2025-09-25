@@ -243,37 +243,41 @@ const useLoginForm = (type, onBlocked) => {
     const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        try {
-            const url = isUser ? '/user/login' : '/member/login';
-            const { data } = await api.post(url, formData);
+    e.preventDefault();
+    setLoading(true);
+    try {
+        const url = isUser ? '/user/login' : '/member/login';
+        const { data } = await api.post(url, formData);
 
-            if (data.success) {
-                toast.success('Logged in successfully!');
-                if (isUser) {
-                    loginUserContext(data.user);
-                    navigate('/user/dashboard');
-                } else {
-                    loginMemberContext(data.user);
-                    navigate('/member/dashboard');
-                }
-            }
-        } catch (error) {
-            if (error.response && error.response.status === 403) {
-                const message = error.response.data.message;
-                const reasonMatch = message.match(/Reason: (.*)/);
-                const dateMatch = message.match(/until (.*)\. Reason/);
-                const reason = reasonMatch ? reasonMatch[1] : "No reason provided.";
-                const until = dateMatch ? new Date(dateMatch[1]) : new Date();
-                onBlocked(reason, until);
+        if (data.success) {
+            toast.success('Logged in successfully!');
+
+            // Save the token to localStorage
+            localStorage.setItem('token', data.token);
+
+            if (isUser) {
+                loginUserContext(data.user);
+                navigate('/user/dashboard');
             } else {
-                toast.error(error.response?.data?.message || 'Login failed.');
+                loginMemberContext(data.user); // The backend returns 'user' key for both
+                navigate('/member/dashboard');
             }
-        } finally {
-            setLoading(false);
         }
-    };
+    } catch (error) {
+        if (error.response && error.response.status === 403) {
+            const message = error.response.data.message;
+            const reasonMatch = message.match(/Reason: (.*)/);
+            const dateMatch = message.match(/until (.*)\. Reason/);
+            const reason = reasonMatch ? reasonMatch[1] : "No reason provided.";
+            const until = dateMatch ? new Date(dateMatch[1]) : new Date();
+            onBlocked(reason, until);
+        } else {
+            toast.error(error.response?.data?.message || 'Login failed.');
+        }
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <form onSubmit={onSubmit} className="space-y-6">
