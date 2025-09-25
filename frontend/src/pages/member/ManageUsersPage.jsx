@@ -143,7 +143,7 @@ const UserTableRow = ({ user, onBlock, onUnblock }) => {
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-200">Active</span>
                 )}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{user.contactNumber}</td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{user.phone}</td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 {isCurrentlyBlocked ? (
                     <button onClick={() => onUnblock(user)} className="flex items-center gap-2 ml-auto bg-green-600 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors">
@@ -169,7 +169,7 @@ const UserCard = ({ user, onBlock, onUnblock }) => {
                 <div className="flex-1">
                     <p className="text-md font-bold text-text-primary">{user.fullName}</p>
                     <p className="text-xs text-text-secondary flex items-center gap-1.5"><Mail size={12}/>{user.email}</p>
-                    <p className="text-xs text-text-secondary flex items-center gap-1.5"><Phone size={12}/>{user.contactNumber}</p>
+                    <p className="text-xs text-text-secondary flex items-center gap-1.5"><Phone size={12}/>{user.phone}</p>
                 </div>
             </div>
             <div className="border-t border-border pt-3 flex justify-between items-center">

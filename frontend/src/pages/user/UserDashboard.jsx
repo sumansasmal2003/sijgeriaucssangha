@@ -16,11 +16,6 @@ const staggerContainer = {
   animate: { transition: { staggerChildren: 0.1 } }
 };
 
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.33, 1, 0.68, 1] } }
-};
-
 // --- Reusable Badge Component ---
 const Badge = ({ tier, label, icon: Icon }) => {
     const colors = {
@@ -126,60 +121,20 @@ const RegistrationCard = ({ registration, onCancel }) => {
     );
 };
 
-// --- Log Card Component ---
-const LogCard = ({ log }) => {
-    const statusColors = {
-        Approved: 'bg-green-500/20 text-green-400 border-green-500/30',
-        Rejected: 'bg-red-500/20 text-red-400 border-red-500/30',
-        Pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-    };
-
-    return (
-        <motion.div
-            variants={fadeIn}
-            className="bg-surface/50 backdrop-blur-sm border border-border/50 rounded-2xl p-5 hover:border-primary/30 transition-all duration-300 group"
-        >
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
-                <div className="flex-1">
-                    <p className="font-bold text-text-primary group-hover:text-primary transition-colors duration-300">
-                        {log.event.title}
-                    </p>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-text-secondary">
-                        <span className="flex items-center gap-1">
-                            <Clock size={14} className="text-primary" />
-                            {log.hours} hours
-                        </span>
-                        <span>{format(new Date(log.loggedAt), 'MMM dd, yyyy')}</span>
-                    </div>
-                </div>
-                <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${statusColors[log.status]}`}>
-                    {log.status}
-                </span>
-            </div>
-            <p className="text-sm text-text-secondary italic mt-3 leading-relaxed">
-                "{log.description}"
-            </p>
-        </motion.div>
-    );
-};
-
 // --- Main Dashboard Component ---
 const UserDashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [registrations, setRegistrations] = useState([]);
-    const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const [regData, logData] = await Promise.all([
+            const [regData] = await Promise.all([
                 api.get('/event/user/my-events'),
-                api.get('/volunteer/my-logs'),
             ]);
             if (regData.data.success) setRegistrations(regData.data.registrations);
-            if (logData.data.success) setLogs(logData.data.logs);
         } catch (error) {
             toast.error("Could not fetch your dashboard data.");
         } finally {
@@ -207,11 +162,8 @@ const UserDashboard = () => {
             }
         }
     };
-
-    const totalApprovedHours = logs.filter(log => log.status === 'Approved').reduce((sum, log) => sum + log.hours, 0);
     const participationCount = registrations.length;
     const totalPerformers = registrations.reduce((sum, reg) => sum + reg.performers.length, 0);
-    const pendingLogs = logs.filter(l => l.status === 'Pending').length;
 
     let badge = null;
     if (participationCount >= 20) badge = { tier: 'Diamond', label: 'Diamond Volunteer', icon: Sparkles };
@@ -258,19 +210,6 @@ const UserDashboard = () => {
                                     Here's your activity overview and upcoming events. Stay engaged with our community.
                                 </p>
                             </div>
-
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <Link
-                                    to="/user/log-hours"
-                                    className="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-white font-semibold px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
-                                >
-                                    <PlusCircle size={20}/>
-                                    <span>Log Volunteer Hours</span>
-                                </Link>
-                            </motion.div>
                         </div>
 
                         {/* Stats Grid */}
@@ -278,12 +217,10 @@ const UserDashboard = () => {
                             variants={staggerContainer}
                             initial="initial"
                             animate="animate"
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12"
                         >
                             <StatCard icon={Calendar} value={participationCount} label="Events Registered" color="primary" delay={0.1} />
                             <StatCard icon={Users} value={totalPerformers} label="Performers Registered" color="secondary" delay={0.2} />
-                            <StatCard icon={Clock} value={totalApprovedHours} label="Approved Hours" color="green" delay={0.3} />
-                            <StatCard icon={HelpCircle} value={pendingLogs} label="Hours in Review" color="yellow" delay={0.4} />
                         </motion.div>
                     </motion.div>
                 </div>
@@ -331,7 +268,7 @@ const UserDashboard = () => {
                                     </div>
                                     <div className="flex items-center gap-3 text-text-secondary">
                                         <Phone size={16} className="text-primary flex-shrink-0" />
-                                        <span className="text-sm">{user.contactNumber}</span>
+                                        <span className="text-sm">{user.phone}</span>
                                     </div>
                                 </div>
 
@@ -395,45 +332,6 @@ const UserDashboard = () => {
                                         <h3 className="text-xl font-bold text-text-primary mb-2">No Event Registrations</h3>
                                         <p className="text-text-secondary max-w-md mx-auto">
                                             You haven't registered for any events yet. Explore our upcoming events to get involved!
-                                        </p>
-                                    </motion.div>
-                                )}
-                            </motion.section>
-
-                            {/* Volunteer Logs Section */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: 0.7 }}
-                            >
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Your Volunteer Logs</h2>
-                                    <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-medium">
-                                        {logs.length} {logs.length === 1 ? 'Log' : 'Logs'}
-                                    </span>
-                                </div>
-
-                                {logs.length > 0 ? (
-                                    <motion.div
-                                        variants={staggerContainer}
-                                        initial="initial"
-                                        animate="animate"
-                                        className="grid gap-4"
-                                    >
-                                        {logs.map(log => (
-                                            <LogCard key={log._id} log={log} />
-                                        ))}
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="text-center py-16 bg-surface/30 border-2 border-dashed border-border/50 rounded-2xl"
-                                    >
-                                        <Clock className="w-16 h-16 text-border mx-auto mb-4" />
-                                        <h3 className="text-xl font-bold text-text-primary mb-2">No Volunteer Logs</h3>
-                                        <p className="text-text-secondary max-w-md mx-auto">
-                                            Start logging your volunteer hours to track your contributions to the community.
                                         </p>
                                     </motion.div>
                                 )}

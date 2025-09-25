@@ -18,7 +18,7 @@ import userRoutes from './routes/userRoutes.js';
 import memberRoutes from './routes/memberRoutes.js';
 import eventRoutes from './routes/eventRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
-import volunteerRoutes from './routes/volunteerRoutes.js';
+
 
 // Load environment variables
 dotenv.config();
@@ -29,42 +29,42 @@ const PORT = process.env.PORT || 4000;
 
 // --- Function to Seed Initial Admin ---
 const seedAdmin = async () => {
-  try {
-    const adminExists = await Member.findOne({ designation: 'Admin' });
+  try {
+    const adminExists = await Member.findOne({ designation: 'Admin' });
 
-    if (!adminExists) {
-      if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-        console.log('ADMIN_EMAIL and ADMIN_PASSWORD not found in .env. Skipping admin seed.');
-        return;
-      }
-      await Member.create({
-        firstName: process.env.ADMIN_FIRST_NAME || 'Admin',
-        lastName: process.env.ADMIN_LAST_NAME || 'User',
-        email: process.env.ADMIN_EMAIL,
-        contactNumber: process.env.ADMIN_PHONE || '0000000000',
-        password: process.env.ADMIN_PASSWORD,
-        designation: 'Admin',
-        status: 'ACTIVE', // Admin is active by default
-      });
-      console.log('Admin user seeded successfully.');
-    }
-  } catch (error) {
-    console.error('Error seeding admin user:', error.message);
-  }
+    if (!adminExists) {
+      if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
+        console.log('ADMIN_EMAIL and ADMIN_PASSWORD not found in .env. Skipping admin seed.');
+        return;
+      }
+      await Member.create({
+        firstName: process.env.ADMIN_FIRST_NAME || 'Admin',
+        lastName: process.env.ADMIN_LAST_NAME || 'User',
+        email: process.env.ADMIN_EMAIL,
+        contactNumber: process.env.ADMIN_PHONE || '0000000000',
+        password: process.env.ADMIN_PASSWORD,
+        designation: 'Admin',
+        status: 'ACTIVE', // Admin is active by default
+      });
+      console.log('Admin user seeded successfully.');
+    }
+  } catch (error) {
+    console.error('Error seeding admin user:', error.message);
+  }
 };
 
 // --- Connect to DB, Seed Admin, and Start Server ---
 connectDB().then(() => {
-    // Seed the admin user after DB connection is successful
-    seedAdmin();
+    // Seed the admin user after DB connection is successful
+    seedAdmin();
 
-    // Start the server only after the DB connection is established
-    app.listen(PORT, () => {
-        console.log(`Server is running on http://localhost:${PORT}`);
-    });
+    // Start the server only after the DB connection is established
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
 }).catch(err => {
-    console.error('Failed to connect to MongoDB. Server not started.', err);
-    process.exit(1);
+    console.error('Failed to connect to MongoDB. Server not started.', err);
+    process.exit(1);
 });
 
 // Cloudinary configuration
@@ -78,13 +78,13 @@ const allowed = ['http://localhost:5173', 'https://sucss.netlify.app', 'https://
 
 // Middleware
 app.use(cors({
-  origin: function(origin, callback){
-    // allow non-browser (curl) requests where origin === undefined
-    if (!origin) return callback(null, true);
-    if (allowed.indexOf(origin) !== -1) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true // if you send cookies / auth
+  origin: function(origin, callback){
+    // allow non-browser (curl) requests where origin === undefined
+    if (!origin) return callback(null, true);
+    if (allowed.indexOf(origin) !== -1) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true // if you send cookies / auth
 }));
 
 app.use(express.json());
@@ -103,7 +103,6 @@ app.use('/api/v1/event', eventRoutes);
 app.use('/api/v1/gallery', galleryRoutes);
 app.use('/api/v1', donationRoutes);
 app.use('/api/v1', announcementRoutes);
-app.use('/api/v1', volunteerRoutes);
 app.use('/api/v1', contactRoutes);
 
 // --- Middleware for Errors ---

@@ -329,7 +329,7 @@ const GalleryPage = () => {
                 plugins={[Zoom]}
                 styles={{
                     container: {
-                        backgroundColor: "rgba(12, 12, 13, 0.98)",
+                        backgroundColor: '#ffffff',
                         backdropFilter: "blur(20px)"
                     },
                     captionsTitle: {

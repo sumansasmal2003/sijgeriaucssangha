@@ -33,8 +33,6 @@ import BlockStatusPage from './pages/auth/BlockStatusPage';
 import ParticipatePage from './pages/user/ParticipatePage';
 import UserProfileSettingsPage from './pages/user/ProfileSettingsPage';
 import OurTeamPage from './pages/OurTeamPage';
-import LogHoursPage from './pages/user/LogHoursPage';
-import ApproveHoursPage from './pages/member/ApproveHoursPage';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
 import VolunteersPage from './pages/VolunteersPage';
@@ -50,9 +48,9 @@ function App() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#18181B',
-            color: '#F8F8F8',
-            border: '1px solid #27272A',
+            background: '#FFFFFF',
+            color: '#111827',
+            border: '1px solid #E5E7EB',
           },
         }}
       />
@@ -99,11 +97,6 @@ function App() {
               path="/user/profile"
               element={<UserProtectedRoute><UserProfileSettingsPage /></UserProtectedRoute>}
             />
-
-            <Route
-            path="/user/log-hours"
-            element={<UserProtectedRoute><LogHoursPage /></UserProtectedRoute>}
-          />
 
               <Route
                 path="/member/dashboard"
@@ -162,11 +155,6 @@ function App() {
               path="/member/announcements"
               element={<MemberProtectedRoute><ManageAnnouncementsPage /></MemberProtectedRoute>}
             />
-
-            <Route
-            path="/member/approve-hours" // <-- NEW ROUTE
-            element={<MemberProtectedRoute><ApproveHoursPage /></MemberProtectedRoute>}
-          />
 
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

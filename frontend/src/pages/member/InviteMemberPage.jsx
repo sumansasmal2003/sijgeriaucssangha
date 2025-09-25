@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { UserPlus, Send, Loader2, ShieldCheck, Users, Award, Mail, Phone, User, Sparkles, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CustomDropdown from '../../components/CustomDropdown';
 
 const fadeIn = {
   initial: { opacity: 0, y: 30 },
@@ -24,8 +25,6 @@ const InviteMemberPage = () => {
         { name: 'Member', value: 'Member' },
         { name: 'Secretary', value: 'Secretary' },
         { name: 'President', value: 'President' },
-        { name: 'Treasurer', value: 'Treasurer' },
-        { name: 'Volunteer', value: 'Volunteer' },
     ];
 
     const handleChange = (e) => {
@@ -221,30 +220,13 @@ const InviteMemberPage = () => {
                         </div>
 
                         {/* Designation Dropdown */}
-                        <div>
-                            <label className="block text-sm font-medium text-text-secondary mb-2">
-                                Designation
-                            </label>
-                            <div className="relative">
-                                <select
-                                    value={formData.designation}
-                                    onChange={(e) => handleDesignationChange(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-3 bg-surface/50 border border-border/50 rounded-xl text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300 appearance-none"
-                                >
-                                    {designationOptions.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                                    <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                                <Award className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary w-5 h-5" />
-                            </div>
-                        </div>
+                        <CustomDropdown
+                            label="Designation"
+                            options={designationOptions}
+                            selected={formData.designation}
+                            setSelected={handleDesignationChange}
+                            icon={Award}
+                        />
 
                         {/* Submit Button */}
                         <motion.button

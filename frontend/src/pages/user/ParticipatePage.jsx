@@ -5,6 +5,7 @@ import api from '../../api/api';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Loader2, Users, ArrowRight, Calendar, Star, Sparkles, Plus, Minus } from 'lucide-react';
+import CustomDropdown from '../../components/CustomDropdown';
 
 const ParticipatePage = () => {
     const { user } = useAuth();
@@ -24,7 +25,7 @@ const ParticipatePage = () => {
                 const { data } = await api.get('/event/all');
                 const upcomingParticipationEvents = data.events.filter(
                     e => e.eventType === 'PARTICIPATION' && new Date(e.date) >= new Date()
-                );
+                ).map(e => ({ name: e.title, value: e._id }));
                 setEvents(upcomingParticipationEvents);
             } catch (error) {
                 toast.error("Could not load available events.");
@@ -47,6 +48,10 @@ const ParticipatePage = () => {
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleEventChange = (value) => {
+        setFormData({ ...formData, eventId: value });
     };
 
     const handleSubmit = async (e) => {
@@ -108,13 +113,13 @@ const ParticipatePage = () => {
                         {/* Event and Contact Details */}
                         <div className="space-y-4 p-6 bg-surface/50 border border-border/50 rounded-xl">
                             <h3 className="font-semibold text-text-primary">1. Select Event & Contact Info</h3>
-                            <div>
-                                <label className="block text-sm font-medium text-text-secondary mb-2">Event</label>
-                                <select name="eventId" value={formData.eventId} onChange={handleInputChange} required className="w-full bg-background border border-border rounded-lg p-2.5">
-                                    <option value="" disabled>-- Select an Event --</option>
-                                    {events.map(event => <option key={event._id} value={event._id}>{event.title}</option>)}
-                                </select>
-                            </div>
+                            <CustomDropdown
+                                label="Event"
+                                options={events}
+                                selected={formData.eventId}
+                                setSelected={handleEventChange}
+                                icon={Calendar}
+                            />
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-text-secondary mb-2">Your Email</label>
