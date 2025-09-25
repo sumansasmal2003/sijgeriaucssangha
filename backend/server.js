@@ -85,7 +85,8 @@ app.use(cors({
     if (allowed.indexOf(origin) !== -1) return callback(null, true);
     return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true // if you send cookies / auth
+  credentials: true, // if you send cookies / auth
+  optionsSuccessStatus: 200
 }));
 
 app.use(express.json());
