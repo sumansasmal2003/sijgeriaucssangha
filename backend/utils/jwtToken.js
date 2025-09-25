@@ -1,4 +1,5 @@
-// No longer imports jwt
+// utils/jwtToken.js
+
 const sendToken = (user, statusCode, token, res) => {
   // options for cookie
   const options = {
@@ -7,7 +8,8 @@ const sendToken = (user, statusCode, token, res) => {
     ),
     httpOnly: true, // Makes it inaccessible to JavaScript
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-    sameSite: 'strict',
+    sameSite: 'none', // Changed from 'lax' to 'none' for cross-domain requests
+    path: '/',
   };
 
   res.status(statusCode).cookie('token', token, options).json({
