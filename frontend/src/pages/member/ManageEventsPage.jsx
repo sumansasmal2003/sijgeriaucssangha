@@ -3,10 +3,34 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/api';
 import { toast } from 'react-hot-toast';
-import { PlusCircle, Edit, Trash2, Loader2, Users, Calendar, MapPin } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PlusCircle, Edit, Trash2, Loader2, Users, Calendar, MapPin, Zap, Target, Sparkles, Trophy } from 'lucide-react';
 import Modal from '../../components/Modal';
 import { format } from 'date-fns';
 import CustomDropdown from '../../components/CustomDropdown';
+
+// Animation variants matching homepage
+const fadeIn = {
+    initial: { opacity: 0, y: 40 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94]
+        }
+    }
+};
+
+
+const staggerContainer = {
+    animate: {
+        transition: {
+            staggerChildren: 0.15,
+            delayChildren: 0.2
+        }
+    }
+};
 
 const ManageEventsPage = () => {
     const { member } = useAuth();
@@ -19,7 +43,7 @@ const ManageEventsPage = () => {
     const fetchEvents = useCallback(async () => {
         try {
             setLoading(true);
-            const { data } = await api.get('/event/all'); // Corrected URL
+            const { data } = await api.get('/event/all');
             const memberEvents = data.events.filter(event => event.createdBy === member._id);
             setEvents(memberEvents);
         } catch (error) {
@@ -63,13 +87,11 @@ const ManageEventsPage = () => {
 
         try {
             if (isEditing) {
-                // --- FIX: Use the correct URL '/events/' (plural) ---
                 await api.put(`/event/${currentEvent._id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
                 toast.success('Event updated successfully!');
             } else {
-                // --- FIX: Use the correct URL '/events/' (plural) ---
                 await api.post('/event/new', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
@@ -85,7 +107,7 @@ const ManageEventsPage = () => {
     const handleDelete = async (eventId) => {
         if (window.confirm('Are you sure you want to delete this event?')) {
             try {
-                await api.delete(`/event/${eventId}`); // Corrected URL
+                await api.delete(`/event/${eventId}`);
                 setEvents(events.filter(event => event._id !== eventId));
                 toast.success('Event deleted successfully!');
             } catch (error) {
@@ -95,50 +117,97 @@ const ManageEventsPage = () => {
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-64"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>;
+        return (
+            <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center relative z-10"
+                >
+                    <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
+                    <p className="text-text-secondary text-lg">Loading events...</p>
+                </motion.div>
+            </div>
+        );
     }
 
     return (
         <>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-text-primary">Manage Events</h1>
-                        <p className="text-text-secondary mt-1">Create, edit, and track your club events.</p>
-                    </div>
-                    <button onClick={handleOpenCreateModal} className="flex items-center justify-center gap-2 bg-primary text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-hover transition-colors w-full sm:w-auto">
-                        <PlusCircle size={20} />
-                        <span>Create Event</span>
-                    </button>
+            <div className="min-h-screen bg-background relative overflow-hidden">
+                {/* Enhanced background */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                    <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float delay-2000"></div>
                 </div>
 
-                {/* --- DESKTOP TABLE VIEW --- */}
-                <div className="hidden md:block bg-surface border border-border rounded-lg shadow-md overflow-hidden">
-                    <table className="min-w-full divide-y divide-border">
-                        <thead className="bg-background">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Title</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase">Type</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                            {events.length > 0 ? events.map((event) => (
-                                <EventTableRow key={event._id} event={event} onEdit={handleOpenEditModal} onDelete={handleDelete} />
-                            )) : (
-                                <tr><td colSpan="4" className="px-6 py-12 text-center text-sm text-text-secondary">You haven't created any events yet.</td></tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col sm:flex-row justify-between sm:items-center gap-6 mb-8"
+                    >
+                        <div>
+                            <div className="inline-flex items-center gap-3 mb-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+                                <Calendar className="w-4 h-4 text-primary" />
+                                <span className="text-sm font-black text-primary uppercase tracking-wider">Manage Events</span>
+                            </div>
+                            <h1 className="text-4xl font-black tracking-tight text-text-primary">Your Events</h1>
+                            <p className="text-text-secondary mt-2 text-lg">Create, edit, and track your club events</p>
+                        </div>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleOpenCreateModal}
+                            className="flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 w-full sm:w-auto"
+                        >
+                            <PlusCircle size={20} />
+                            <span>Create Event</span>
+                        </motion.button>
+                    </motion.div>
 
-                {/* --- MOBILE CARD VIEW --- */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:hidden">
-                     {events.length > 0 ? events.map((event) => (
-                        <EventCard key={event._id} event={event} onEdit={handleOpenEditModal} onDelete={handleDelete} />
-                    )) : (
-                        <p className="text-center text-text-secondary col-span-full">You haven't created any events yet.</p>
+                    {/* Enhanced Events Grid */}
+                    {events.length > 0 ? (
+                        <motion.div
+                            variants={staggerContainer}
+                            initial="initial"
+                            animate="animate"
+                            className="grid gap-6"
+                        >
+                            {events.map((event) => (
+                                <EventCard
+                                    key={event._id}
+                                    event={event}
+                                    onEdit={handleOpenEditModal}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-20"
+                        >
+                            <div className="w-24 h-24 bg-border/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Calendar size={40} className="text-border" />
+                            </div>
+                            <h3 className="text-2xl font-black text-text-primary mb-3">No Events Created Yet</h3>
+                            <p className="text-text-secondary mb-6 text-lg">Create your first event to engage with the community.</p>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleOpenCreateModal}
+                                className="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300"
+                            >
+                                <PlusCircle size={20} />
+                                <span>Create Your First Event</span>
+                            </motion.button>
+                        </motion.div>
                     )}
                 </div>
             </div>
@@ -150,53 +219,95 @@ const ManageEventsPage = () => {
     );
 };
 
-// --- Sub-components for different views ---
+// Enhanced EventCard Component
+const EventCard = ({ event, onEdit, onDelete }) => {
+    const isCurrentlyActive = new Date(event.date) >= new Date();
 
-const EventTableRow = ({ event, onEdit, onDelete }) => (
-    <tr>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-primary">{event.title}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{format(new Date(event.date), 'PP')}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm">
-            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${event.eventType === 'PARTICIPATION' ? 'bg-blue-900 text-blue-200' : 'bg-gray-700 text-gray-300'}`}>{event.eventType}</span>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex justify-end items-center gap-4">
-            {event.eventType === 'PARTICIPATION' && (
-                <Link to={`/member/events/participants/${event._id}`} className="flex items-center gap-1.5 text-green-400 hover:text-green-300 transition-colors">
-                    <Users size={16} /><span className="text-xs font-bold">Participants</span>
-                </Link>
-            )}
-            <button onClick={() => onEdit(event)} className="text-primary hover:text-primary-hover transition-colors"><Edit size={18} /></button>
-            <button onClick={() => onDelete(event._id)} className="text-secondary hover:text-secondary/80 transition-colors"><Trash2 size={18} /></button>
-        </td>
-    </tr>
-);
+    return (
+        <motion.div
+            variants={fadeIn}
+            className="group relative bg-surface/80 backdrop-blur-sm border border-border/50 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-500 shadow-lg hover:shadow-xl"
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative z-10">
+                <div className="p-6">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+                        <div className="flex-1">
+                            <h3 className="text-xl font-black text-text-primary mb-2">{event.title}</h3>
+                            <p className="text-text-secondary leading-relaxed mb-4">{event.description}</p>
+                            <div className="flex flex-wrap gap-4 text-text-secondary text-sm">
+                                <div className="flex items-center gap-2">
+                                    <Calendar size={16} className="text-primary" />
+                                    <span className="font-medium">{format(new Date(event.date), 'PP')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <MapPin size={16} className="text-primary" />
+                                    <span className="font-medium">{event.location}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-3">
+                            <span className={`px-3 py-1 text-xs font-black rounded-full ${
+                                event.eventType === 'PARTICIPATION'
+                                    ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                    : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                            }`}>
+                                {event.eventType}
+                            </span>
+                            <span className={`px-3 py-1 text-xs font-black rounded-full ${
+                                isCurrentlyActive
+                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                    : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                            }`}>
+                                {isCurrentlyActive ? 'Upcoming' : 'Past'}
+                            </span>
+                        </div>
+                    </div>
 
-const EventCard = ({ event, onEdit, onDelete }) => (
-    <div className="bg-surface border border-border rounded-lg shadow-md flex flex-col">
-        <div className="p-4">
-            <h3 className="font-bold text-text-primary">{event.title}</h3>
-            <p className="text-sm text-text-secondary flex items-center gap-2 mt-1"><Calendar size={14}/> {format(new Date(event.date), 'PP')}</p>
-            <p className="text-sm text-text-secondary flex items-center gap-2"><MapPin size={14}/> {event.location}</p>
-            <span className={`mt-2 px-2 py-1 text-xs font-semibold rounded-full inline-block ${event.eventType === 'PARTICIPATION' ? 'bg-blue-900 text-blue-200' : 'bg-gray-700 text-gray-300'}`}>{event.eventType}</span>
-        </div>
-        <div className="border-t border-border mt-auto p-3 flex justify-end items-center gap-4 bg-background/50">
-            {event.eventType === 'PARTICIPATION' && (
-                <Link to={`/member/events/participants/${event._id}`} className="flex items-center gap-1.5 text-green-400 hover:text-green-300 transition-colors mr-auto">
-                    <Users size={16} /><span className="text-xs font-bold">Participants</span>
-                </Link>
-            )}
-            <button onClick={() => onEdit(event)} className="text-primary hover:text-primary-hover transition-colors"><Edit size={20} /></button>
-            <button onClick={() => onDelete(event._id)} className="text-secondary hover:text-secondary/80 transition-colors"><Trash2 size={20} /></button>
-        </div>
-    </div>
-);
+                    <div className="flex justify-between items-center pt-4 border-t border-border/30">
+                        <div className="flex gap-3">
+                            {event.eventType === 'PARTICIPATION' && (
+                                <Link
+                                    to={`/member/events/participants/${event._id}`}
+                                    className="group flex items-center gap-2 text-primary font-black hover:text-primary/80 transition-colors"
+                                >
+                                    <Users size={18} />
+                                    <span>View Participants</span>
+                                </Link>
+                            )}
+                        </div>
+                        <div className="flex gap-3">
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => onEdit(event)}
+                                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                            >
+                                <Edit size={18} />
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => onDelete(event._id)}
+                                className="p-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary hover:text-white transition-all duration-300"
+                            >
+                                <Trash2 size={18} />
+                            </motion.button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
 
+// Enhanced EventForm Component
 const EventForm = ({ event, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState(event);
     const [formLoading, setFormLoading] = useState(false);
 
     const eventTypeOptions = [
-        { name: 'General', value: 'GENERAL' },
+        { name: 'General Event', value: 'GENERAL' },
         { name: 'Participation Based', value: 'PARTICIPATION' },
     ];
 
@@ -221,27 +332,59 @@ const EventForm = ({ event, onSubmit, onCancel }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-background border border-border rounded-lg p-2" />
+                <label className="block text-sm font-black text-text-secondary mb-2">Event Title</label>
+                <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter event title"
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300"
+                />
             </div>
+
             <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
-                <textarea name="description" value={formData.description} onChange={handleChange} required rows="4" className="w-full bg-background border border-border rounded-lg p-2" />
+                <label className="block text-sm font-black text-text-secondary mb-2">Description</label>
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                    rows="4"
+                    placeholder="Describe your event..."
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300 resize-vertical"
+                />
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">Date</label>
-                    <input type="date" name="date" value={formData.date} onChange={handleChange} required className="w-full bg-background border border-border rounded-lg p-2" />
+                    <label className="block text-sm font-black text-text-secondary mb-2">Date</label>
+                    <input
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300"
+                    />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-text-secondary mb-1">Location</label>
-                    <input type="text" name="location" value={formData.location} onChange={handleChange} required className="w-full bg-background border border-border rounded-lg p-2" />
+                    <label className="block text-sm font-black text-text-secondary mb-2">Location</label>
+                    <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        required
+                        placeholder="Event location"
+                        className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300"
+                    />
                 </div>
             </div>
 
-            {/* --- REPLACEMENT: Use the new CustomDropdown component --- */}
             <CustomDropdown
                 label="Event Type"
                 options={eventTypeOptions}
@@ -250,15 +393,36 @@ const EventForm = ({ event, onSubmit, onCancel }) => {
             />
 
             <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Banner Image</label>
-                <input type="file" name="bannerImage" onChange={handleFileChange} accept="image/*" className="w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                <label className="block text-sm font-black text-text-secondary mb-2">Banner Image</label>
+                <input
+                    type="file"
+                    name="bannerImage"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="w-full text-sm text-text-secondary file:mr-4 file:py-3 file:px-4 file:rounded-xl file:border-0 file:font-black file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-colors"
+                />
             </div>
+
             <div className="flex justify-end gap-4 pt-4">
-                <button type="button" onClick={onCancel} className="bg-background border border-border text-text-primary font-semibold px-4 py-2 rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-hover disabled:opacity-50 flex items-center gap-2">
-                    {formLoading && <Loader2 className="animate-spin" size={18}/>}
+                <motion.button
+                    type="button"
+                    onClick={onCancel}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-surface/50 border border-border/50 text-text-primary font-black px-6 py-3 rounded-xl hover:border-primary/50 transition-all duration-300"
+                >
+                    Cancel
+                </motion.button>
+                <motion.button
+                    type="submit"
+                    disabled={formLoading}
+                    whileHover={{ scale: formLoading ? 1 : 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center gap-3"
+                >
+                    {formLoading && <Loader2 className="animate-spin" size={18} />}
                     {formLoading ? 'Saving...' : 'Save Event'}
-                </button>
+                </motion.button>
             </div>
         </form>
     );

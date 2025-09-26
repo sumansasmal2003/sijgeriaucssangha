@@ -3,41 +3,48 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../api/api';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Loader2, Calendar, Users, Mail, Phone, Edit, Clock, PlusCircle, CheckCircle, XCircle, HelpCircle, LogOut, Sparkles, Trophy, Award, Star } from 'lucide-react';
+import { Loader2, Calendar, Users, Mail, Phone, Edit, Clock, PlusCircle, CheckCircle, XCircle, HelpCircle, LogOut, Sparkles, Trophy, Award, Star, Zap, Target } from 'lucide-react';
 import { format, isBefore, startOfDay } from 'date-fns';
 import { Link, useNavigate } from 'react-router-dom';
 
 const fadeIn = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.33, 1, 0.68, 1] } }
+  initial: { opacity: 0, y: 40 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }
+  }
 };
 
 const staggerContainer = {
   animate: { transition: { staggerChildren: 0.1 } }
 };
 
-// --- Reusable Badge Component ---
+// Enhanced Badge Component
 const Badge = ({ tier, label, icon: Icon }) => {
     const colors = {
-        Bronze: 'from-orange-600 to-orange-700 text-orange-100',
-        Silver: 'from-gray-500 to-gray-600 text-gray-100',
-        Gold: 'from-yellow-600 to-yellow-700 text-yellow-100',
-        Platinum: 'from-teal-600 to-teal-700 text-teal-100',
-        Diamond: 'from-cyan-600 to-cyan-700 text-cyan-100',
+        Bronze: 'from-orange-600 to-orange-700 text-orange-100 shadow-orange-500/25',
+        Silver: 'from-gray-500 to-gray-600 text-gray-100 shadow-gray-500/25',
+        Gold: 'from-yellow-600 to-yellow-700 text-yellow-100 shadow-yellow-500/25',
+        Platinum: 'from-teal-600 to-teal-700 text-teal-100 shadow-teal-500/25',
+        Diamond: 'from-cyan-600 to-cyan-700 text-cyan-100 shadow-cyan-500/25',
     };
     return (
-        <div className={`bg-gradient-to-r ${colors[tier]} px-4 py-2 rounded-full flex items-center gap-2 shadow-lg`}>
-            {Icon && <Icon size={16} />}
-            <span className="font-bold text-sm">{label}</span>
-        </div>
+        <motion.div
+            whileHover={{ scale: 1.05 }}
+            className={`bg-gradient-to-r ${colors[tier]} px-6 py-3 rounded-2xl flex items-center gap-3 shadow-2xl`}
+        >
+            {Icon && <Icon size={20} className="filter drop-shadow" />}
+            <span className="font-black text-sm tracking-wide">{label}</span>
+        </motion.div>
     );
 };
 
-// --- Reusable Stat Card Component ---
+// Enhanced Stat Card Component
 const StatCard = ({ icon: Icon, value, label, color, delay }) => {
     const colors = {
-        primary: 'from-primary/20 to-primary/10 text-primary',
-        secondary: 'from-secondary/20 to-secondary/10 text-secondary',
+        primary: 'from-blue-500/20 to-blue-500/10 text-blue-400',
+        secondary: 'from-cyan-500/20 to-cyan-500/10 text-cyan-400',
         green: 'from-green-500/20 to-green-500/10 text-green-400',
         yellow: 'from-yellow-500/20 to-yellow-500/10 text-yellow-400',
     };
@@ -47,22 +54,24 @@ const StatCard = ({ icon: Icon, value, label, color, delay }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
-            className="group relative bg-surface/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-500 hover:-translate-y-1"
+            whileHover={{ scale: 1.02, y: -5 }}
+            className="group relative bg-surface/50 backdrop-blur-sm p-8 rounded-3xl border border-border/50 hover:border-blue-400/30 transition-all duration-500 shadow-lg hover:shadow-2xl"
         >
-            <div className="flex items-center gap-4">
-                <div className={`p-3 rounded-xl bg-gradient-to-r ${colors[color]} group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon size={24}/>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="flex items-center gap-6">
+                <div className={`p-4 rounded-2xl bg-gradient-to-r ${colors[color]} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <Icon size={28}/>
                 </div>
                 <div>
-                    <p className="text-2xl md:text-3xl font-bold text-text-primary">{value}</p>
-                    <p className="text-sm font-medium text-text-secondary mt-1">{label}</p>
+                    <p className="text-3xl md:text-4xl font-black text-text-primary">{value}</p>
+                    <p className="text-sm font-bold text-text-secondary mt-2 tracking-wide">{label}</p>
                 </div>
             </div>
         </motion.div>
     );
 };
 
-// --- Registration Card Component ---
+// Enhanced Registration Card Component
 const RegistrationCard = ({ registration, onCancel }) => {
     const eventDate = new Date(registration.eventDate);
     const canCancel = isBefore(startOfDay(new Date()), startOfDay(eventDate));
@@ -70,49 +79,59 @@ const RegistrationCard = ({ registration, onCancel }) => {
     return (
         <motion.div
             variants={fadeIn}
-            className="group bg-surface/50 backdrop-blur-sm border border-border/50 rounded-2xl overflow-hidden hover:border-primary/30 transition-all duration-500 hover:-translate-y-1"
+            whileHover={{ y: -5, scale: 1.01 }}
+            className="group relative bg-surface/50 backdrop-blur-sm border border-border/50 rounded-3xl overflow-hidden hover:border-blue-400/30 transition-all duration-500 shadow-lg hover:shadow-xl"
         >
-            <div className="p-6">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative z-10 p-8">
+                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
                     <div className="flex-1">
-                        <h3 className="text-lg font-bold text-text-primary group-hover:text-primary transition-colors duration-300">
+                        <h3 className="text-2xl font-black text-text-primary group-hover:text-blue-400 transition-colors duration-300 mb-3">
                             {registration.eventTitle}
                         </h3>
-                        <div className="flex items-center gap-2 mt-2 text-text-secondary">
-                            <Calendar size={16} className="text-primary" />
-                            <span className="text-sm">{format(eventDate, 'MMMM dd, yyyy')}</span>
+                        <div className="flex items-center gap-3 text-text-secondary">
+                            <Calendar size={20} className="text-blue-400" />
+                            <span className="font-medium">{format(eventDate, 'MMMM dd, yyyy')}</span>
                         </div>
                     </div>
 
                     {canCancel ? (
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => onCancel(registration)}
-                            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all duration-300"
+                            className="flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-400 border border-red-400/20 hover:border-red-400/40 transition-all duration-300"
                         >
-                            <XCircle size={16} />
-                            <span className="text-sm font-medium">Cancel</span>
-                        </button>
+                            <XCircle size={20} />
+                            <span className="font-bold">Cancel</span>
+                        </motion.button>
                     ) : (
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 text-green-400">
-                            <CheckCircle size={16} />
-                            <span className="text-sm font-medium">Completed</span>
+                        <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500/10 to-green-600/10 text-green-400 border border-green-400/20">
+                            <CheckCircle size={20} />
+                            <span className="font-bold">Completed</span>
                         </div>
                     )}
                 </div>
 
-                <div className="border-t border-border/50 pt-4">
-                    <h4 className="font-semibold text-text-primary text-sm mb-3 flex items-center gap-2">
-                        <Users size={16} className="text-secondary" />
+                <div className="border-t border-border/30 pt-6">
+                    <h4 className="font-black text-text-primary text-lg mb-4 flex items-center gap-3">
+                        <Users size={20} className="text-cyan-400" />
                         Registered Performers ({registration.performers.length})
                     </h4>
-                    <div className="grid gap-2">
+                    <div className="grid gap-3">
                         {registration.performers.map((performer, index) => (
-                            <div key={index} className="flex items-center gap-3 p-2 bg-background/30 rounded-lg">
-                                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                                <span className="text-sm text-text-primary">
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="flex items-center gap-4 p-3 bg-background/30 rounded-xl border border-border/20"
+                            >
+                                <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full"></div>
+                                <span className="font-medium text-text-primary">
                                     {performer.firstName} {performer.lastName}
                                 </span>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
@@ -121,7 +140,7 @@ const RegistrationCard = ({ registration, onCancel }) => {
     );
 };
 
-// --- Main Dashboard Component ---
+// Enhanced Main Dashboard Component
 const UserDashboard = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -162,6 +181,7 @@ const UserDashboard = () => {
             }
         }
     };
+
     const participationCount = registrations.length;
     const totalPerformers = registrations.reduce((sum, reg) => sum + reg.performers.length, 0);
 
@@ -174,50 +194,67 @@ const UserDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <div className="text-center">
-                    <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
-                    <p className="text-text-secondary">Loading your dashboard...</p>
+            <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-float"></div>
+                    <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl animate-float delay-2000"></div>
                 </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center relative z-10"
+                >
+                    <Loader2 className="w-16 h-16 animate-spin text-blue-400 mx-auto mb-6" />
+                    <p className="text-text-secondary text-lg font-medium">Loading your dashboard...</p>
+                </motion.div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            {/* Hero Section */}
-            <section className="relative bg-gradient-to-br from-surface/50 to-background">
-                <div className="absolute inset-0 opacity-[0.02]">
-                    <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, #F8F8F8 1px, transparent 0)`,
-                        backgroundSize: '40px 40px'
-                    }}></div>
-                </div>
+        <div className="min-h-screen bg-background overflow-hidden relative">
+            {/* Enhanced Background */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute top-20 left-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl animate-float"></div>
+                <div className="absolute bottom-20 right-10 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl animate-float delay-2000"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
+            </div>
 
+            {/* Enhanced Hero Section */}
+            <section className="relative bg-gradient-to-br from-surface/30 to-blue-500/5 pt-20 pb-16">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                         className="max-w-7xl mx-auto"
                     >
-                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="inline-flex items-center gap-3 mb-6 px-6 py-3 rounded-full bg-blue-500/10 border border-blue-500/20"
+                        >
+                            <Zap className="w-5 h-5 text-blue-400" />
+                            <span className="text-sm font-semibold text-blue-400 uppercase tracking-wider">Dashboard</span>
+                        </motion.div>
+
+                        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
                             <div className="flex-1">
-                                <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-text-primary mb-4">
-                                    Welcome back, <span className="text-primary">{user.fullName}</span>!
+                                <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-text-primary mb-6">
+                                    Welcome back, <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">{user.fullName}</span>!
                                 </h1>
-                                <p className="text-lg text-text-secondary max-w-2xl">
-                                    Here's your activity overview and upcoming events. Stay engaged with our community.
+                                <p className="text-xl text-text-secondary max-w-2xl leading-relaxed">
+                                    Here's your activity overview and upcoming events. Stay engaged with our vibrant community.
                                 </p>
                             </div>
                         </div>
 
-                        {/* Stats Grid */}
+                        {/* Enhanced Stats Grid */}
                         <motion.div
                             variants={staggerContainer}
                             initial="initial"
                             animate="animate"
-                            className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12"
+                            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-4xl"
                         >
                             <StatCard icon={Calendar} value={participationCount} label="Events Registered" color="primary" delay={0.1} />
                             <StatCard icon={Users} value={totalPerformers} label="Performers Registered" color="secondary" delay={0.2} />
@@ -226,83 +263,98 @@ const UserDashboard = () => {
                 </div>
             </section>
 
-            {/* Main Content */}
-            <section className="py-10">
+            {/* Enhanced Main Content */}
+            <section className="py-12 relative z-10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        {/* Sidebar - User Profile */}
+                    <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                        {/* Enhanced Sidebar */}
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.6, delay: 0.5 }}
-                            className="lg:col-span-1"
+                            className="xl:col-span-1"
                         >
-                            <div className="bg-surface/50 backdrop-blur-sm rounded-2xl border border-border/50 p-6 space-y-6 lg:sticky lg:top-24">
-                                {/* User Badge */}
-                                {badge && (
-                                    <div className="flex justify-center">
-                                        <Badge tier={badge.tier} label={badge.label} icon={badge.icon} />
-                                    </div>
-                                )}
+                            <div className="group relative bg-surface/50 backdrop-blur-sm rounded-3xl border border-border/50 p-8 space-y-8 xl:sticky xl:top-24 hover:border-blue-400/30 transition-all duration-500 shadow-lg">
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className="relative z-10">
+                                    {/* User Badge */}
+                                    {badge && (
+                                        <motion.div
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{ delay: 0.7 }}
+                                            className="flex justify-center mb-8"
+                                        >
+                                            <Badge tier={badge.tier} label={badge.label} icon={badge.icon} />
+                                        </motion.div>
+                                    )}
 
-                                {/* Profile Image */}
-                                <div className="text-center">
-                                    <div className="relative inline-block">
-                                        <img
-                                            src={user.profileImage?.url || '/default-avatar.png'}
-                                            alt={user.fullName}
-                                            className="w-24 h-24 rounded-2xl object-cover border-4 border-primary/50 shadow-lg"
-                                        />
-                                        <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-full">
-                                            <CheckCircle size={16} />
+                                    {/* Enhanced Profile Section */}
+                                    <div className="text-center mb-8">
+                                        <div className="relative inline-block mb-6">
+                                            <img
+                                                src={user.profileImage?.url || '/default-avatar.png'}
+                                                alt={user.fullName}
+                                                className="w-32 h-32 rounded-2xl object-cover border-4 border-blue-400/50 shadow-2xl"
+                                            />
+                                            <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-2 rounded-full shadow-lg">
+                                                <CheckCircle size={16} />
+                                            </div>
+                                        </div>
+                                        <h2 className="text-2xl font-black text-text-primary">{user.fullName}</h2>
+                                    </div>
+
+                                    {/* Enhanced Contact Info */}
+                                    <div className="space-y-4 border-t border-border/30 pt-6 mb-8">
+                                        <div className="flex items-center gap-4 text-text-secondary p-3 rounded-xl bg-background/30">
+                                            <Mail size={20} className="text-blue-400 flex-shrink-0" />
+                                            <span className="text-sm font-medium truncate">{user.email}</span>
+                                        </div>
+                                        <div className="flex items-center gap-4 text-text-secondary p-3 rounded-xl bg-background/30">
+                                            <Phone size={20} className="text-cyan-400 flex-shrink-0" />
+                                            <span className="text-sm font-medium">{user.phone}</span>
                                         </div>
                                     </div>
-                                    <h2 className="mt-4 text-xl font-bold text-text-primary">{user.fullName}</h2>
-                                </div>
 
-                                {/* Contact Info */}
-                                <div className="space-y-3 border-t border-border/50 pt-4">
-                                    <div className="flex items-center gap-3 text-text-secondary">
-                                        <Mail size={16} className="text-primary flex-shrink-0" />
-                                        <span className="text-sm truncate">{user.email}</span>
+                                    {/* Enhanced Action Buttons */}
+                                    <div className="space-y-4 border-t border-border/30 pt-6">
+                                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                            <Link
+                                                to="/user/profile"
+                                                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-400 font-black py-4 rounded-xl border border-blue-400/20 hover:border-blue-400/40 transition-all duration-300"
+                                            >
+                                                <Edit size={20} />
+                                                <span>Edit Profile</span>
+                                            </Link>
+                                        </motion.div>
+                                        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-400 font-black py-4 rounded-xl border border-red-400/20 hover:border-red-400/40 transition-all duration-300"
+                                            >
+                                                <LogOut size={20} />
+                                                <span>Logout</span>
+                                            </button>
+                                        </motion.div>
                                     </div>
-                                    <div className="flex items-center gap-3 text-text-secondary">
-                                        <Phone size={16} className="text-primary flex-shrink-0" />
-                                        <span className="text-sm">{user.phone}</span>
-                                    </div>
-                                </div>
-
-                                {/* Action Buttons */}
-                                <div className="space-y-3 border-t border-border/50 pt-4">
-                                    <Link
-                                        to="/user/profile"
-                                        className="w-full flex items-center justify-center gap-2 bg-primary/10 text-primary font-semibold py-3 rounded-xl hover:bg-primary/20 transition-all duration-300"
-                                    >
-                                        <Edit size={16} />
-                                        <span>Edit Profile</span>
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full flex items-center justify-center gap-2 bg-secondary/10 text-secondary font-semibold py-3 rounded-xl hover:bg-secondary/20 transition-all duration-300"
-                                    >
-                                        <LogOut size={16} />
-                                        <span>Logout</span>
-                                    </button>
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Main Content Area */}
-                        <div className="lg:col-span-3 space-y-12">
-                            {/* Event Registrations Section */}
+                        {/* Enhanced Main Content Area */}
+                        <div className="xl:col-span-3 space-y-12">
+                            {/* Enhanced Event Registrations Section */}
                             <motion.section
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.6 }}
                             >
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Your Event Registrations</h2>
-                                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div>
+                                        <h2 className="text-4xl font-black text-text-primary mb-2">Your Event Registrations</h2>
+                                        <p className="text-text-secondary">Manage your upcoming events and performances</p>
+                                    </div>
+                                    <span className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-400 px-4 py-2 rounded-xl font-black border border-blue-400/20">
                                         {registrations.length} {registrations.length === 1 ? 'Event' : 'Events'}
                                     </span>
                                 </div>
@@ -312,7 +364,7 @@ const UserDashboard = () => {
                                         variants={staggerContainer}
                                         initial="initial"
                                         animate="animate"
-                                        className="grid gap-6"
+                                        className="grid gap-8"
                                     >
                                         {registrations.map(reg => (
                                             <RegistrationCard
@@ -326,13 +378,22 @@ const UserDashboard = () => {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="text-center py-16 bg-surface/30 border-2 border-dashed border-border/50 rounded-2xl"
+                                        className="text-center py-20 bg-surface/30 border-2 border-dashed border-border/50 rounded-3xl"
                                     >
-                                        <Calendar className="w-16 h-16 text-border mx-auto mb-4" />
-                                        <h3 className="text-xl font-bold text-text-primary mb-2">No Event Registrations</h3>
-                                        <p className="text-text-secondary max-w-md mx-auto">
+                                        <Calendar className="w-20 h-20 text-border mx-auto mb-6" />
+                                        <h3 className="text-2xl font-black text-text-primary mb-4">No Event Registrations</h3>
+                                        <p className="text-text-secondary max-w-md mx-auto text-lg mb-6">
                                             You haven't registered for any events yet. Explore our upcoming events to get involved!
                                         </p>
+                                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                            <Link
+                                                to="/events"
+                                                className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-black px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                                            >
+                                                <Target size={20} />
+                                                <span>Browse Events</span>
+                                            </Link>
+                                        </motion.div>
                                     </motion.div>
                                 )}
                             </motion.section>

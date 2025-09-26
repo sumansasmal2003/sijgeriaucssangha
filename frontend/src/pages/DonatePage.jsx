@@ -226,7 +226,6 @@ const DonatePage = () => {
                                                     }`}
                                                 >
                                                     ₹{opt}
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                                 </motion.button>
                                             ))}
                                         </div>

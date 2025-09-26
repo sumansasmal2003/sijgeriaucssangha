@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Calendar, Image as ImageIcon, LayoutDashboard, LogIn, LogOut, UserPlus, Menu, X, Megaphone, Users, Heart, Zap, Sparkles } from 'lucide-react';
+import { Home, Calendar, Image as ImageIcon, LayoutDashboard, LogIn, LogOut, UserPlus, Menu, X, Megaphone, Users, Heart, Zap, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import sucss from '../assets/sucss.png';
 
@@ -29,6 +29,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [logoutLoading, setLogoutLoading] = useState(false);
     const [isActive, setIsActive] = useState(false)
 
     useEffect(() => {
@@ -51,9 +52,16 @@ const Navbar = () => {
     }, []);
 
     const handleLogout = async () => {
-        await logout();
-        navigate('/');
-        setMobileMenuOpen(false);
+        setLogoutLoading(true);
+        try {
+            await logout();
+            navigate('/');
+            setMobileMenuOpen(false);
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            setLogoutLoading(false);
+        }
     };
 
     const displayName = user?.fullName || (member ? `${member.firstName} ${member.lastName}` : '');
@@ -79,13 +87,23 @@ const Navbar = () => {
                         Welcome, <span className="font-bold text-text-primary">{displayName}</span>
                     </Link>
                     <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: logoutLoading ? 1 : 1.02 }}
+                        whileTap={{ scale: logoutLoading ? 1 : 0.98 }}
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-text-secondary hover:text-primary hover:border-primary/50 group transition-all duration-300"
+                        disabled={logoutLoading}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border text-text-secondary hover:text-primary hover:border-primary/50 group transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <LogOut size={16} />
-                        <span className="font-semibold">Logout</span>
+                        {logoutLoading ? (
+                            <>
+                                <Loader2 size={16} className="animate-spin" />
+                                <span className="font-semibold">Logging out...</span>
+                            </>
+                        ) : (
+                            <>
+                                <LogOut size={16} />
+                                <span className="font-semibold">Logout</span>
+                            </>
+                        )}
                     </motion.button>
                 </div>
             );
@@ -125,10 +143,20 @@ const Navbar = () => {
                     <motion.div variants={menuItemVariants}>
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-4 p-4 rounded-2xl text-lg font-bold text-text-secondary hover:text-primary hover:bg-surface/50 w-full text-left transition-all duration-300"
+                            disabled={logoutLoading}
+                            className="flex items-center gap-4 p-4 rounded-2xl text-lg font-bold text-text-secondary hover:text-primary hover:bg-surface/50 w-full text-left transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            <LogOut size={24} />
-                            <span>Logout</span>
+                            {logoutLoading ? (
+                                <>
+                                    <Loader2 size={24} className="animate-spin" />
+                                    <span>Logging out...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <LogOut size={24} />
+                                    <span>Logout</span>
+                                </>
+                            )}
                         </button>
                     </motion.div>
                 </>

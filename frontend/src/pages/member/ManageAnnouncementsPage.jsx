@@ -1,9 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/api';
 import { toast } from 'react-hot-toast';
-import { PlusCircle, Loader2, Edit, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { PlusCircle, Loader2, Edit, Trash2, Zap, Target, Sparkles, Megaphone, Calendar, User } from 'lucide-react';
 import { format } from 'date-fns';
 import Modal from '../../components/Modal';
+
+// Animation variants
+const fadeIn = {
+    initial: { opacity: 0, y: 40 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94]
+        }
+    }
+};
+const staggerContainer = {
+    animate: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
 
 const ManageAnnouncementsPage = () => {
     const [announcements, setAnnouncements] = useState([]);
@@ -75,44 +96,115 @@ const ManageAnnouncementsPage = () => {
 
     return (
         <>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-text-primary">Manage Announcements</h1>
-                    <button onClick={handleOpenCreateModal} className="flex items-center gap-2 bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors">
-                        <PlusCircle size={20} />
-                        <span>New Announcement</span>
-                    </button>
+            <div className="min-h-screen bg-background relative overflow-hidden">
+                {/* Enhanced background */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                    <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float delay-2000"></div>
                 </div>
 
-                {loading ? (
-                    <div className="flex justify-center items-center h-64"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>
-                ) : (
-                    <div className="bg-surface border border-border rounded-lg shadow-md overflow-hidden">
-                        <table className="min-w-full divide-y divide-border">
-                            <thead className="bg-background">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Title</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Created By</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {announcements.map((item) => (
-                                    <tr key={item._id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-primary">{item.title}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{item.createdBy.firstName} {item.createdBy.lastName}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{format(new Date(item.createdAt), 'PP')}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                                            <button onClick={() => handleOpenEditModal(item)} className="text-primary hover:text-primary-hover"><Edit size={18} /></button>
-                                            <button onClick={() => handleDelete(item._id)} className="text-secondary hover:text-secondary/80"><Trash2 size={18} /></button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex justify-between items-center mb-8"
+                    >
+                        <div>
+                            <div className="inline-flex items-center gap-3 mb-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+                                <Megaphone className="w-4 h-4 text-primary" />
+                                <span className="text-sm font-black text-primary uppercase tracking-wider">Manage Announcements</span>
+                            </div>
+                            <h1 className="text-4xl font-black tracking-tight text-text-primary">Community Announcements</h1>
+                        </div>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleOpenCreateModal}
+                            className="flex items-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300"
+                        >
+                            <PlusCircle size={20} />
+                            <span>New Announcement</span>
+                        </motion.button>
+                    </motion.div>
+
+                    {loading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                        </div>
+                    ) : (
+                        <motion.div
+                            variants={staggerContainer}
+                            initial="initial"
+                            animate="animate"
+                            className="grid gap-6"
+                        >
+                            {announcements.map((item) => (
+                                <motion.div
+                                    key={item._id}
+                                    variants={fadeIn}
+                                    className="bg-surface/80 backdrop-blur-sm border border-border/50 rounded-3xl p-6 hover:border-primary/50 transition-all duration-500 shadow-lg hover:shadow-xl"
+                                >
+                                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-black text-text-primary mb-2">{item.title}</h3>
+                                            <div className="flex flex-wrap gap-4 text-text-secondary text-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <User size={16} className="text-primary" />
+                                                    <span className="font-medium">{item.createdBy.firstName} {item.createdBy.lastName}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar size={16} className="text-primary" />
+                                                    <span className="font-medium">{format(new Date(item.createdAt), 'PP')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => handleOpenEditModal(item)}
+                                                className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                                            >
+                                                <Edit size={18} />
+                                            </motion.button>
+                                            <motion.button
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => handleDelete(item._id)}
+                                                className="p-2 rounded-lg bg-secondary/10 text-secondary hover:bg-secondary hover:text-white transition-all duration-300"
+                                            >
+                                                <Trash2 size={18} />
+                                            </motion.button>
+                                        </div>
+                                    </div>
+                                    <p className="text-text-primary leading-relaxed">{item.content}</p>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+
+                    {announcements.length === 0 && !loading && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center py-20"
+                        >
+                            <div className="w-24 h-24 bg-border/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Megaphone size={40} className="text-border" />
+                            </div>
+                            <h3 className="text-2xl font-black text-text-primary mb-3">No Announcements Yet</h3>
+                            <p className="text-text-secondary mb-6 text-lg">Create your first announcement to share with the community.</p>
+                            <button
+                                onClick={handleOpenCreateModal}
+                                className="inline-flex items-center gap-3 bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300"
+                            >
+                                <PlusCircle size={20} />
+                                <span>Create Announcement</span>
+                            </button>
+                        </motion.div>
+                    )}
+                </div>
             </div>
 
             <Modal isOpen={showModal} onClose={handleCloseModal} title={isEditing ? 'Edit Announcement' : 'Create Announcement'}>
@@ -122,7 +214,7 @@ const ManageAnnouncementsPage = () => {
     );
 };
 
-// Sub-component for the form to keep things clean
+// Enhanced AnnouncementForm component
 const AnnouncementForm = ({ announcement, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState(announcement);
     const [formLoading, setFormLoading] = useState(false);
@@ -139,21 +231,51 @@ const AnnouncementForm = ({ announcement, onSubmit, onCancel }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Title</label>
-                <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-background border border-border rounded-lg p-2" />
+                <label className="block text-sm font-black text-text-secondary mb-2">Title</label>
+                <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter announcement title"
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300"
+                />
             </div>
             <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1">Content</label>
-                <textarea name="content" value={formData.content} onChange={handleChange} required rows="6" className="w-full bg-background border border-border rounded-lg p-2" />
+                <label className="block text-sm font-black text-text-secondary mb-2">Content</label>
+                <textarea
+                    name="content"
+                    value={formData.content}
+                    onChange={handleChange}
+                    required
+                    rows="6"
+                    placeholder="Enter announcement content"
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all duration-300 resize-vertical"
+                />
             </div>
             <div className="flex justify-end gap-4 pt-4">
-                <button type="button" onClick={onCancel} className="bg-background border border-border text-text-primary font-semibold px-4 py-2 rounded-lg">Cancel</button>
-                <button type="submit" disabled={formLoading} className="bg-primary text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-hover disabled:opacity-50 flex items-center gap-2">
+                <motion.button
+                    type="button"
+                    onClick={onCancel}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-surface/50 border border-border/50 text-text-primary font-black px-6 py-3 rounded-xl hover:border-primary/50 transition-all duration-300"
+                >
+                    Cancel
+                </motion.button>
+                <motion.button
+                    type="submit"
+                    disabled={formLoading}
+                    whileHover={{ scale: formLoading ? 1 : 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-primary to-primary-hover text-white font-black px-6 py-3 rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center gap-3"
+                >
                     {formLoading && <Loader2 className="animate-spin" size={18} />}
                     {formLoading ? 'Saving...' : 'Save Announcement'}
-                </button>
+                </motion.button>
             </div>
         </form>
     );

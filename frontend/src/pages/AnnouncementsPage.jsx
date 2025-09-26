@@ -166,7 +166,7 @@ const AnnouncementsPage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="grid grid-cols-4 gap-6 max-w-2xl mx-auto mt-12"
+                            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mt-12"
                         >
                             {timeCategories.map((category) => (
                                 <motion.div

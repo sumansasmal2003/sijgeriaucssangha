@@ -2,14 +2,9 @@ import React, { useState } from 'react';
 import api from '../../api/api';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { UserPlus, Send, Loader2, ShieldCheck, Users, Award, Mail, Phone, User, Sparkles, ArrowLeft } from 'lucide-react';
+import { UserPlus, Send, Loader2, ShieldCheck, Users, Award, Mail, Phone, User, Sparkles, ArrowLeft, Zap, Target } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CustomDropdown from '../../components/CustomDropdown';
-
-const fadeIn = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.33, 1, 0.68, 1] } }
-};
 
 const InviteMemberPage = () => {
     const [formData, setFormData] = useState({
@@ -56,13 +51,17 @@ const InviteMemberPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background flex flex-col lg:flex-row">
-            {/* Left Side - Info Section (Hidden on Mobile) */}
-            <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-surface/80 to-background/80 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10"></div>
-                <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-10 left-10 w-80 h-80 bg-secondary/5 rounded-full blur-3xl"></div>
+        <div className="min-h-screen bg-background flex flex-col lg:flex-row relative overflow-hidden">
+            {/* Enhanced background */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float delay-2000"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]"></div>
+            </div>
 
+            {/* Left Side - Enhanced Info Section */}
+            <div className="hidden lg:flex lg:w-1/2 relative z-10">
                 <div className="relative z-10 h-full flex flex-col justify-center p-8 lg:p-12 xl:p-16">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
@@ -70,25 +69,44 @@ const InviteMemberPage = () => {
                         transition={{ duration: 0.8 }}
                         className="max-w-lg"
                     >
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="p-3 rounded-2xl bg-gradient-to-r from-primary to-secondary shadow-lg">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="flex items-center gap-3 mb-8"
+                        >
+                            <div className="p-3 rounded-2xl bg-gradient-to-r from-primary to-secondary shadow-2xl">
                                 <UserPlus className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-text-primary">Grow Our Community</h1>
+                                <h1 className="text-2xl font-black text-text-primary">Grow Our Community</h1>
                                 <p className="text-text-secondary text-sm">Invite a new member to join</p>
                             </div>
-                        </div>
+                        </motion.div>
 
-                        <h2 className="text-4xl lg:text-5xl font-bold text-text-primary mb-6 leading-tight">
-                            Extend an <span className="text-primary">Invitation</span> to Join the Family
-                        </h2>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight mb-6 leading-tight"
+                        >
+                            Extend an <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Invitation</span> to Join the Family
+                        </motion.h2>
 
-                        <p className="text-lg text-text-secondary mb-8 leading-relaxed">
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-lg text-text-secondary mb-8 leading-relaxed"
+                        >
                             Help strengthen our community by inviting passionate individuals. They'll receive a secure invitation to complete their profile and join our mission.
-                        </p>
+                        </motion.p>
 
-                        <div className="space-y-4 mb-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="space-y-4 mb-8"
+                        >
                             {[
                                 { icon: ShieldCheck, text: "Secure onboarding process with email verification" },
                                 { icon: Users, text: "Expand our network of dedicated community members" },
@@ -99,7 +117,7 @@ const InviteMemberPage = () => {
                                     key={index}
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
                                     className="flex items-center gap-4 text-text-secondary group"
                                 >
                                     <div className="p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
@@ -108,20 +126,25 @@ const InviteMemberPage = () => {
                                     <span className="text-sm group-hover:text-text-primary transition-colors">{item.text}</span>
                                 </motion.div>
                             ))}
-                        </div>
+                        </motion.div>
 
-                        <div className="p-4 rounded-xl bg-surface/50 border border-border/50">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.8 }}
+                            className="p-4 rounded-xl bg-surface/50 border border-border/50 backdrop-blur-sm"
+                        >
                             <div className="flex items-center gap-3 text-sm text-text-secondary">
                                 <ShieldCheck size={16} className="text-primary flex-shrink-0" />
-                                <span>All invitations are secure and require email verification.</span>
+                                <span className="font-medium">All invitations are secure and require email verification.</span>
                             </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
                 </div>
             </div>
 
-            {/* Right Side - Form Section */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 xl:p-16">
+            {/* Right Side - Enhanced Form Section */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 xl:p-16 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -131,22 +154,30 @@ const InviteMemberPage = () => {
                     {/* Back Button for Mobile */}
                     <Link
                         to="/member/dashboard"
-                        className="lg:hidden flex items-center gap-2 text-text-secondary hover:text-primary transition-all duration-300 group mb-6"
+                        className="lg:hidden flex items-center gap-3 text-text-secondary hover:text-primary transition-all duration-300 group mb-6"
                     >
                         <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span>Back to Dashboard</span>
+                        <span className="font-medium">Back to Dashboard</span>
                     </Link>
 
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-text-primary mb-2">Invite New Member</h2>
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="text-center mb-8"
+                    >
+                        <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 rounded-full bg-primary/10 border border-primary/20">
+                            <Zap className="w-5 h-5 text-primary" />
+                            <span className="text-sm font-black text-primary uppercase tracking-wider">Invite Member</span>
+                        </div>
+                        <h2 className="text-4xl font-black tracking-tight mb-2">Welcome New Member</h2>
                         <p className="text-text-secondary">They'll receive an email to complete their profile</p>
-                    </div>
+                    </motion.div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Name Fields */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-text-secondary mb-2">
+                                <label className="block text-sm font-black text-text-secondary mb-2">
                                     First Name
                                 </label>
                                 <div className="relative">
@@ -163,7 +194,7 @@ const InviteMemberPage = () => {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-text-secondary mb-2">
+                                <label className="block text-sm font-black text-text-secondary mb-2">
                                     Last Name
                                 </label>
                                 <div className="relative">
@@ -183,7 +214,7 @@ const InviteMemberPage = () => {
 
                         {/* Email Field */}
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary mb-2">
+                            <label className="block text-sm font-black text-text-secondary mb-2">
                                 Email Address
                             </label>
                             <div className="relative">
@@ -202,7 +233,7 @@ const InviteMemberPage = () => {
 
                         {/* Phone Field */}
                         <div>
-                            <label className="block text-sm font-medium text-text-secondary mb-2">
+                            <label className="block text-sm font-black text-text-secondary mb-2">
                                 Contact Number
                             </label>
                             <div className="relative">
@@ -234,7 +265,7 @@ const InviteMemberPage = () => {
                             whileTap={{ scale: 0.98 }}
                             type="submit"
                             disabled={loading}
-                            className="w-full flex justify-center items-center gap-3 py-4 px-6 rounded-xl bg-gradient-to-r from-primary to-primary-hover text-white font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full flex justify-center items-center gap-3 py-4 px-6 rounded-xl bg-gradient-to-r from-primary to-primary-hover text-white font-black disabled:opacity-50 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                         >
                             {loading ? (
                                 <>
@@ -251,17 +282,22 @@ const InviteMemberPage = () => {
                     </form>
 
                     {/* Security Note */}
-                    <div className="mt-6 p-4 rounded-xl bg-surface/30 border border-border/30">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="mt-6 p-4 rounded-xl bg-surface/50 border border-border/50 backdrop-blur-sm"
+                    >
                         <div className="flex items-start gap-3">
                             <ShieldCheck size={16} className="text-primary mt-0.5 flex-shrink-0" />
                             <div>
-                                <p className="text-sm text-text-secondary">
+                                <p className="text-sm text-text-secondary font-medium">
                                     The invited member will receive a secure link to complete their profile.
                                     Their information is protected and encrypted.
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </motion.div>
             </div>
         </div>

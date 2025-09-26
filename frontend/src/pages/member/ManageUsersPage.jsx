@@ -1,9 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../api/api';
 import { toast } from 'react-hot-toast';
-import { Loader2, ShieldOff, ShieldCheck, CheckCircle, XCircle, Mail, Phone } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Loader2, ShieldOff, ShieldCheck, CheckCircle, XCircle, Mail, Phone, User, Zap, Target } from 'lucide-react';
 import Modal from '../../components/Modal';
 import { format } from 'date-fns';
+
+// Animation variants
+const fadeIn = {
+    initial: { opacity: 0, y: 40 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94]
+        }
+    }
+};
+
+const staggerContainer = {
+    animate: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
 
 const ManageUsersPage = () => {
     const [users, setUsers] = useState([]);
@@ -62,51 +84,62 @@ const ManageUsersPage = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64">
-                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+            <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                </div>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center relative z-10"
+                >
+                    <Loader2 className="w-16 h-16 animate-spin text-primary mx-auto mb-4" />
+                    <p className="text-text-secondary text-lg">Loading users...</p>
+                </motion.div>
             </div>
         );
     }
 
     return (
         <>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <h1 className="text-3xl font-bold text-text-primary mb-8">Manage Users</h1>
-
-                {/* --- DESKTOP TABLE VIEW (Hidden on mobile) --- */}
-                <div className="hidden md:block bg-surface border border-border rounded-lg shadow-md overflow-hidden">
-                    <table className="min-w-full divide-y divide-border">
-                        <thead className="bg-background">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Name</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Contact</th>
-                                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                            {users.map((user) => (
-                                <UserTableRow
-                                    key={user._id}
-                                    user={user}
-                                    onBlock={handleOpenModal}
-                                    onUnblock={handleUnblockUser}
-                                />
-                            ))}
-                        </tbody>
-                    </table>
+            <div className="min-h-screen bg-background relative overflow-hidden">
+                {/* Enhanced background */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/3 to-secondary/3"></div>
+                    <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+                    <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl animate-float delay-2000"></div>
                 </div>
 
-                {/* --- MOBILE CARD VIEW (Hidden on desktop) --- */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:hidden">
-                    {users.map((user) => (
-                        <UserCard
-                            key={user._id}
-                            user={user}
-                            onBlock={handleOpenModal}
-                            onUnblock={handleUnblockUser}
-                        />
-                    ))}
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mb-8"
+                    >
+                        <div className="inline-flex items-center gap-3 mb-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+                            <User className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-black text-primary uppercase tracking-wider">Manage Users</span>
+                        </div>
+                        <h1 className="text-4xl font-black tracking-tight text-text-primary">User Management</h1>
+                        <p className="text-text-secondary mt-2 text-lg">Manage user accounts and access permissions</p>
+                    </motion.div>
+
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="initial"
+                        animate="animate"
+                        className="grid gap-6"
+                    >
+                        {users.map((user) => (
+                            <UserCard
+                                key={user._id}
+                                user={user}
+                                onBlock={handleOpenModal}
+                                onUnblock={handleUnblockUser}
+                            />
+                        ))}
+                    </motion.div>
                 </div>
             </div>
 
@@ -117,87 +150,97 @@ const ManageUsersPage = () => {
     );
 };
 
-// Sub-component for the Desktop Table Row
-const UserTableRow = ({ user, onBlock, onUnblock }) => {
-    const isCurrentlyBlocked = user.isBlocked && new Date() < new Date(user.blockedUntil);
-    return (
-        <tr>
-            <td className="px-6 py-4 whitespace-nowrap">
-                <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
-                        <img className="h-10 w-10 rounded-full object-cover" src={user.profileImage.url} alt={user.fullName} />
-                    </div>
-                    <div className="ml-4">
-                        <div className="text-sm font-medium text-text-primary">{user.fullName}</div>
-                        <div className="text-sm text-text-secondary">{user.email}</div>
-                    </div>
-                </div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-                {isCurrentlyBlocked ? (
-                    <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-900 text-red-200">Blocked</span>
-                        <p className="text-xs text-text-secondary mt-1">Until {format(new Date(user.blockedUntil), 'PP')}</p>
-                    </div>
-                ) : (
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-200">Active</span>
-                )}
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">{user.phone}</td>
-            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                {isCurrentlyBlocked ? (
-                    <button onClick={() => onUnblock(user)} className="flex items-center gap-2 ml-auto bg-green-600 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors">
-                        <ShieldCheck size={16} /><span>Unblock</span>
-                    </button>
-                ) : (
-                    <button onClick={() => onBlock(user)} className="flex items-center gap-2 ml-auto bg-secondary text-white font-semibold px-3 py-1.5 rounded-md hover:bg-secondary/80 transition-colors">
-                        <ShieldOff size={16} /><span>Block</span>
-                    </button>
-                )}
-            </td>
-        </tr>
-    );
-};
-
-// Sub-component for the Mobile Card View
+// Enhanced UserCard Component
 const UserCard = ({ user, onBlock, onUnblock }) => {
     const isCurrentlyBlocked = user.isBlocked && new Date() < new Date(user.blockedUntil);
+
     return (
-        <div className="bg-surface border border-border rounded-lg shadow-md p-4 flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-                <img className="h-12 w-12 rounded-full object-cover" src={user.profileImage.url} alt={user.fullName} />
-                <div className="flex-1">
-                    <p className="text-md font-bold text-text-primary">{user.fullName}</p>
-                    <p className="text-xs text-text-secondary flex items-center gap-1.5"><Mail size={12}/>{user.email}</p>
-                    <p className="text-xs text-text-secondary flex items-center gap-1.5"><Phone size={12}/>{user.phone}</p>
+        <motion.div
+            variants={fadeIn}
+            className="group relative bg-surface/80 backdrop-blur-sm border border-border/50 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-500 shadow-lg hover:shadow-xl"
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative z-10 p-6">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="relative">
+                        <img
+                            className="h-16 w-16 rounded-2xl object-cover border-2 border-primary/50 shadow-lg"
+                            src={user.profileImage.url}
+                            alt={user.fullName}
+                        />
+                        <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${
+                            isCurrentlyBlocked ? 'bg-red-500' : 'bg-green-500'
+                        }`}>
+                            {isCurrentlyBlocked ? (
+                                <ShieldOff size={12} className="text-white" />
+                            ) : (
+                                <ShieldCheck size={12} className="text-white" />
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="text-xl font-black text-text-primary mb-1">{user.fullName}</h3>
+                        <div className="flex flex-wrap gap-4 text-text-secondary text-sm">
+                            <div className="flex items-center gap-2">
+                                <Mail size={16} className="text-primary" />
+                                <span className="font-medium">{user.email}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Phone size={16} className="text-primary" />
+                                <span className="font-medium">{user.phone}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-border/30">
+                    <div>
+                        {isCurrentlyBlocked ? (
+                            <div>
+                                <span className="px-3 py-1 text-xs font-black rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
+                                    Blocked
+                                </span>
+                                <p className="text-xs text-text-secondary mt-1 font-medium">
+                                    Until {format(new Date(user.blockedUntil), 'PP')}
+                                </p>
+                            </div>
+                        ) : (
+                            <span className="px-3 py-1 text-xs font-black rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+                                Active
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="flex gap-3">
+                        {isCurrentlyBlocked ? (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => onUnblock(user)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-black px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300"
+                            >
+                                <ShieldCheck size={16} />
+                                <span>Unblock</span>
+                            </motion.button>
+                        ) : (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => onBlock(user)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-secondary to-red-500 text-white font-black px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300"
+                            >
+                                <ShieldOff size={16} />
+                                <span>Block</span>
+                            </motion.button>
+                        )}
+                    </div>
                 </div>
             </div>
-            <div className="border-t border-border pt-3 flex justify-between items-center">
-                {isCurrentlyBlocked ? (
-                    <div>
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-900 text-red-200">Blocked</span>
-                        <p className="text-xs text-text-secondary mt-1">Until {format(new Date(user.blockedUntil), 'PP')}</p>
-                    </div>
-                ) : (
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900 text-green-200">Active</span>
-                )}
-
-                {isCurrentlyBlocked ? (
-                    <button onClick={() => onUnblock(user)} className="flex items-center gap-2 bg-green-600 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors text-sm">
-                        <ShieldCheck size={16} /><span>Unblock</span>
-                    </button>
-                ) : (
-                    <button onClick={() => onBlock(user)} className="flex items-center gap-2 bg-secondary text-white font-semibold px-3 py-1.5 rounded-md hover:bg-secondary/80 transition-colors text-sm">
-                        <ShieldOff size={16} /><span>Block</span>
-                    </button>
-                )}
-            </div>
-        </div>
+        </motion.div>
     );
 };
 
-
-// Sub-component for the Block User Form Modal
+// Enhanced BlockUserForm Component
 const BlockUserForm = ({ onSubmit, onCancel }) => {
     const [blockReason, setBlockReason] = useState('');
     const [blockDurationInDays, setBlockDurationInDays] = useState(7);
@@ -217,20 +260,20 @@ const BlockUserForm = ({ onSubmit, onCancel }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-                <label htmlFor="blockDurationInDays" className="block text-sm font-medium text-text-secondary mb-1">Block Duration (in days)</label>
+                <label htmlFor="blockDurationInDays" className="block text-sm font-black text-text-secondary mb-2">Block Duration (in days)</label>
                 <input
                     type="number"
                     id="blockDurationInDays"
                     value={blockDurationInDays}
                     onChange={(e) => setBlockDurationInDays(parseInt(e.target.value, 10))}
                     min="1"
-                    className="w-full bg-background border border-border rounded-lg p-2"
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary/50 transition-all duration-300"
                 />
             </div>
             <div>
-                <label htmlFor="blockReason" className="block text-sm font-medium text-text-secondary mb-1">Reason for Blocking</label>
+                <label htmlFor="blockReason" className="block text-sm font-black text-text-secondary mb-2">Reason for Blocking</label>
                 <textarea
                     id="blockReason"
                     value={blockReason}
@@ -238,17 +281,30 @@ const BlockUserForm = ({ onSubmit, onCancel }) => {
                     required
                     rows="4"
                     placeholder="e.g., Violation of community guidelines..."
-                    className="w-full bg-background border border-border rounded-lg p-2"
+                    className="w-full bg-surface/50 border border-border/50 rounded-xl p-3 text-text-primary placeholder-text-secondary/70 focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary/50 transition-all duration-300 resize-vertical"
                 />
             </div>
             <div className="flex justify-end gap-4 pt-4">
-                <button type="button" onClick={onCancel} className="bg-background border border-border text-text-primary font-semibold px-4 py-2 rounded-lg flex items-center gap-2">
-                    <XCircle size={18} /><span>Cancel</span>
-                </button>
-                <button type="submit" disabled={loading} className="bg-secondary text-white font-semibold px-4 py-2 rounded-lg hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2">
+                <motion.button
+                    type="button"
+                    onClick={onCancel}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-surface/50 border border-border/50 text-text-primary font-black px-6 py-3 rounded-xl hover:border-primary/50 transition-all duration-300 flex items-center gap-2"
+                >
+                    <XCircle size={18} />
+                    <span>Cancel</span>
+                </motion.button>
+                <motion.button
+                    type="submit"
+                    disabled={loading}
+                    whileHover={{ scale: loading ? 1 : 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-gradient-to-r from-secondary to-red-500 text-white font-black px-6 py-3 rounded-xl hover:shadow-xl disabled:opacity-50 transition-all duration-300 flex items-center gap-2"
+                >
                     {loading ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle size={18} />}
                     <span>{loading ? 'Blocking...' : 'Confirm Block'}</span>
-                </button>
+                </motion.button>
             </div>
         </form>
     );

@@ -30,7 +30,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-gradient-to-br from-surface to-background border-t border-border/50 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-surface to-background border-t border-border/50 overflow-hidden mb-10 md:mb-0">
       {/* Enhanced Background Pattern */}
       <div className="absolute inset-0 opacity-[0.03]">
         <div className="absolute inset-0" style={{
